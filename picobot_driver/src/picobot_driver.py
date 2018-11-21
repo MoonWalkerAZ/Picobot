@@ -9,7 +9,7 @@ import time
 # Set the GPIO modes
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
-
+#test sprememb
 _FREQUENCY = 20 # konstanta, za notranjo uporabo
 
 def _porezi(value,min,max):
