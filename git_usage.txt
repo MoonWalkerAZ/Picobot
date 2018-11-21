@@ -1,0 +1,8 @@
+git clone url
+
+git status
+git add "nek_file"
+git commit -m "dodal nov file"
+git push
+
+git pull origin master
