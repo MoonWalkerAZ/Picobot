@@ -1,0 +1,3 @@
+<launch>
+  <node  pkg="picobot_driver" type="picobot_driver.py" name="picobot_driver" output="screen"/>
+</launch>
