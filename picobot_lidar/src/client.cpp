@@ -43,13 +43,22 @@
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
 {
     int count = scan->scan_time / scan->time_increment;
-    ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
-    ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
+    //scan->ranges.size(); 360 velikost
+
+    //ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
+    //ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
   
-    for(int i = 0; i < count; i++) {
+    //ROS_INFO("Smo na 0 stopinjah: %f ",scan->ranges[0]);
+    //ROS_INFO("Smo na 90 stopinjah: %f ",scan->ranges[90]);
+    //ROS_INFO("Smo na 180 stopinjah: %f ",scan->ranges[180]);
+    //ROS_INFO("Smo na 270 stopinjah: %f ",scan->ranges[270]);
+    //ROS_INFO("Smo na 360 stopinjah: %f ",scan->ranges[359]);
+    ROS_INFO(": [kot %f, razdalja %f]", RAD2DEG(scan->angle_min + scan->angle_increment * 180), scan->ranges[180]);
+
+    /*for(int i = 0; i < count; i++) {
         float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
         ROS_INFO(": [%f, %f]", degree, scan->ranges[i]);
-    }
+    }*/
 }
 
 int main(int argc, char **argv)

@@ -198,6 +198,8 @@ int main(int argc, char * argv[]) {
     nh_private.param<bool>("inverted", inverted, false);
     nh_private.param<bool>("angle_compensate", angle_compensate, true);
 
+    //drv->setMotorPWM(pwm);
+
     printf("RPLIDAR running on ROS package rplidar_ros\n"
            "SDK Version: "RPLIDAR_SDK_VERSION"\n");
 
@@ -232,6 +234,7 @@ int main(int argc, char * argv[]) {
 
     ros::ServiceServer stop_motor_service = nh.advertiseService("stop_motor", stop_motor);
     ros::ServiceServer start_motor_service = nh.advertiseService("start_motor", start_motor);
+
 
     drv->startMotor();
     drv->startScan();

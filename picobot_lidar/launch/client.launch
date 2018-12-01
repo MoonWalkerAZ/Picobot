@@ -1,0 +1,4 @@
+<launch>
+  <node name="rplidar_node_client" pkg="picobot_lidar" type="client" output="screen">
+  </node>
+</launch>
