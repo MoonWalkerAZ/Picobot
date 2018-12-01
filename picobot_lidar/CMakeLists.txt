@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rplidar_ros)
+project(picobot_lidar)
 
 set(RPLIDAR_SDK_PATH "./sdk/")
 

@@ -6,3 +6,5 @@ git commit -m "dodal nov file"
 git push
 
 git pull origin master
+
+alias cat_make='cd ~/catkin_ws/ && catkin_make && source devel/setup.bash'
