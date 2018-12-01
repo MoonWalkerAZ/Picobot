@@ -4,7 +4,7 @@
   It requires rplidar.launch.
  -->
 <launch>
-  <include file="$(find rplidar_ros)/launch/rplidar.launch" />
-  <include file="$(find rplidar_ros)/launch/hectormapping.launch" />
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/slam.rviz" />
+  <include file="$(find picobot_lidar)/launch/rplidar.launch" />
+  <include file="$(find picobot_lidar)/launch/hectormapping.launch" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find picobot_lidar)/rviz/slam.rviz" />
 </launch>

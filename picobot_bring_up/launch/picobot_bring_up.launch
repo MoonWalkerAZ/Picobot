@@ -5,5 +5,9 @@
   	<!-- RUN ROBOT DRIVER -->
   	<include file="$(find picobot_driver)/launch/picobot_driver.launch"/>
 
+	<!-- RUN LIDAR -->
+	<include file="$(find picobot_lidar)/launch/rplidar.launch" />
+  	<include file="$(find picobot_lidar)/launch/hectormapping.launch" />
+
 </launch>
 
