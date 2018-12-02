@@ -50,9 +50,11 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
     for(int i = 270;i < 360;i++){
       //int degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
       //ROS_INFO("Zaznan predmet desno spredaj na razdalji %f pod kotom %f",scan->ranges[i],degree);
+      
       if (scan->ranges[i] < 0.20){
         ROS_INFO("Dejanska blizina (manj od 20cm): %f",scan->ranges[i]);
       }
+      
     }
 }
 
