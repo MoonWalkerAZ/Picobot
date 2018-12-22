@@ -7,7 +7,7 @@ import RPi.GPIO as GPIO  # Import the GPIO Library
 import time
 
 # Set the GPIO modes
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 #test sprememb
 _FREQUENCY = 20 # konstanta, za notranjo uporabo
@@ -22,12 +22,16 @@ def _porezi(value,min,max):
 
 class Motor:
 
-   def __init__(self, forward_pin, backward_pin):
+   def __init__(self, forward_pin, backward_pin, R_EN, L_EN):
       # self._forward_pin = forward_pin
        #self._backward_pin = backward_pin
 
        GPIO.setup(forward_pin, GPIO.OUT)
        GPIO.setup(backward_pin, GPIO.OUT)
+       GPIO.setup(R_EN, GPIO.OUT)
+       GPIO.setup(L_EN, GPIO.OUT)
+       GPIO.output(R_EN, True)
+       GPIO.output(L_EN, True)
 
        self._forward_pwm = GPIO.PWM(forward_pin, _FREQUENCY)
        self._backward_pwm = GPIO.PWM(backward_pin, _FREQUENCY)
@@ -55,8 +59,14 @@ class Driver:
     self._wheel_base = rospy.get_param('~wheel_base', 0.091)
 
     # Nastavimo pine za motorje
-    self._left_motor = Motor(35, 37)
-    self._right_motor = Motor(36, 38)
+    self.R_EN_levi = 5
+    self.L_EN_levi = 6
+    self._left_motor = Motor(13, 19, self.R_EN_levi, self.L_EN_levi)
+    
+    self.R_EN_desni = 9
+    self.L_EN_desni = 11
+    self._right_motor = Motor(10, 7, self.R_EN_desni, self.L_EN_desni)
+   
     self._left_speed_percent = 0
     self._right_speed_percent = 0
 

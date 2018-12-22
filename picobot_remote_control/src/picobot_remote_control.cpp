@@ -49,7 +49,7 @@ void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
   if(joy->buttons[5] > 0){//je RB
   twist.angular.z = a_scale_*joy->axes[angular_];
-  twist.linear.x = -l_scale_*joy->axes[linear_];
+  twist.linear.x = l_scale_*joy->axes[linear_];
   vel_pub_.publish(twist);
   }else{
   twist.angular.z = 0;
