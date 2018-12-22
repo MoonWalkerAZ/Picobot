@@ -26,10 +26,10 @@ private:
 
 
 PicoRemoteControl::PicoRemoteControl():
-  linear_(0),//levo,desno 1
-  angular_(1),//naprej,nazaj 0
+  linear_(1),//levo,desno 1
+  angular_(0),//naprej,nazaj 0
   a_scale_(1.5),
-  l_scale_(0.5)
+  l_scale_(0.8)
 {
 
   //nh_.param("axis_linear", linear_, linear_);

@@ -83,9 +83,8 @@ class Driver:
       angular = message.angular.z
 
        # Izracunamo vrtenje koles v m/s
-      left_speed = linear - (angular/self._max_speed) * self._wheel_base/2
-      right_speed = linear + (angular/self._max_speed) * self._wheel_base/2
-
+      left_speed = (angular/self._max_speed) * self._wheel_base/2 - linear
+      right_speed = (angular/self._max_speed)* self._wheel_base/2 + linear
       self._left_speed_percent = (100 * left_speed)
       self._right_speed_percent = (100 * right_speed)
 
