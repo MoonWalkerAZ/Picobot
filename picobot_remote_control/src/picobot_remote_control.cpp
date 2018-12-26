@@ -15,9 +15,11 @@ public:
 
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
+  
 
   ros::NodeHandle nh_;
-
+  
+  int lidar_status;
   int linear_, angular_;
   double l_scale_, a_scale_;
   ros::Publisher vel_pub_;
@@ -37,7 +39,6 @@ PicoRemoteControl::PicoRemoteControl():
   //nh_.param("scale_angular", a_scale_, a_scale_);
   //nh_.param("scale_linear", l_scale_, l_scale_);
 
-
   vel_pub_ = nh_.advertise<geometry_msgs::Twist>("pico/cmd_vel", 1);
   joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &PicoRemoteControl::joyCallback, this);
 
@@ -45,6 +46,24 @@ PicoRemoteControl::PicoRemoteControl():
 
 void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
+
+  nh_.getParam("/picobot_remote_control/lidar_status",lidar_status);
+
+  if(joy->buttons[3] > 0){//Y
+    nh_.setParam("/picobot_remote_control/lidar_status",1);
+    system("cd && rosservice call /start_motor");
+    ROS_INFO("Vklaplam motor");
+    }
+else if(joy->buttons[2] > 0){//B
+    nh_.setParam("/picobot_remote_control/lidar_status",0);
+    system("cd && rosservice call /stop_motor");
+    ROS_INFO("Izklapljam motor");
+    }
+else if (joy->buttons[0] > 0) {//X
+}
+
+
+
   geometry_msgs::Twist twist;
 
   if(joy->buttons[5] > 0){//je RB
@@ -61,7 +80,7 @@ void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
 int main(int argc, char** argv)
 {
- // sleep(5);
+ // system("cd && roslaunch /home/pi/catkin_ws/src/Picobot/picobot_lidar/launch/rplidar.launch");
   ros::init(argc, argv, "picobot_remote_control");
   PicoRemoteControl pico_remote_control;
   ros::spin();
