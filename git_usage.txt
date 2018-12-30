@@ -1,3 +1,5 @@
+Git nastavitve:
+
 git clone url
 
 git status
@@ -7,4 +9,54 @@ git push
 
 git pull origin master
 
+Pomembne poti:
+
+/home/pi/.ros/log/latest
+
+Preverimo kje se nahaja izkani niz (picobot_imu):
+Nahajati se morale v /etc
+
+sudo grep picobot_imu * -R
+
+Lokacija bring up file v etc:
+
+/etc/ros/kinetic/picobot.d	
+
+
+Linkamo bring up direktorija:
+
+ln -s /etc/ros/kinetic/picobot.d/picobot_bring_up.launch /home/pi/catkin_ws/src/Picobot/picobot_bring_up/launch/picobot_bring_up.launch
+
+Dodamo v /etc/rc.local
+
+chmod 777 /dev/mem
+chmod 777 /dev/gpiomem
+chmod 777 /dev/ttyUSB0
+chmod 777 /dev/input/event*
+chmod 777 /dev/fb*
+
+Dodamo v ~/.bashrc
+source /home/pi/catkin_ws/devel/setup.bash
 alias cat_make='cd ~/catkin_ws/ && catkin_make && source devel/setup.bash && cd -'
+
+
+Nastavimo i2c:
+
+Preverimo:
+ls -l /dev/i2c-1
+crw-rw-rw- 1 root i2c 89, 1 Feb 11  2016 /dev/i2c-1
+
+sudo nano /etc/udev/rules.d/99-i2c.rules
+KERNEL=="i2c-[0-7]",MODE="0666"
+
+Ukaz: sudo adduser pi i2c
+
+Dodamo v /boot/config.txt:
+
+dtparam=i2c1=on
+dtmparam=i2c_arm=on
+
+Dodamo v /etc/modules:
+ic2-bcm2708
+i2c-dev
+
