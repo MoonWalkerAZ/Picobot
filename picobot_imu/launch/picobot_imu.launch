@@ -1,0 +1,3 @@
+<launch>
+  <node  pkg="picobot_imu" type="picobot_imu.py" name="picobot_imu" output="screen"/>
+</launch>

@@ -60,6 +60,8 @@ else if(joy->buttons[2] > 0){//B
     ROS_INFO("Izklapljam motor");
     }
 else if (joy->buttons[0] > 0) {//X
+  //system("cd && roslaunch /home/pi/catkin_ws/src/Picobot/picobot_imu/launch/picobot_imu.launch");
+  //ROS_INFO("Vklapljam HAT");
 }
 
 
@@ -80,7 +82,7 @@ else if (joy->buttons[0] > 0) {//X
 
 int main(int argc, char** argv)
 {
- // system("cd && roslaunch /home/pi/catkin_ws/src/Picobot/picobot_lidar/launch/rplidar.launch");
+  //  system("cd && roslaunch /home/pi/catkin_ws/src/Picobot/picobot_imu/launch/picobot_imu.launch");
   ros::init(argc, argv, "picobot_remote_control");
   PicoRemoteControl pico_remote_control;
   ros::spin();

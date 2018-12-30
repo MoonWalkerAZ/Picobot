@@ -11,7 +11,10 @@
 		<!-- <param name="scale_linear" value="0.5"/> -->
                 <param name="lidar_status" value="0" />
 	</node>
-    <node pkg="timed_roslaunch" type="timed_roslaunch.sh" args="1 picobot_lidar rplidar.launch" name="timed_roslaunch" output="screen" />
+
+  <!--  <node pkg="timed_roslaunch" type="timed_roslaunch.sh" args="1 picobot_lidar rplidar.launch" name="timed_roslaunch" output="screen" /> -->
+  <!--  <node pkg="timed_roslaunch" type="timed_roslaunch.sh" args="1 picobot_imu picobot_imu.launch" name="timed_roslaunch2" output="screen" /> -->
+
 <!-- Teleop node-->
 	<!--<node pkg="teleop_twist_joy" type="teleop_node" name="teleop" output="screen">
 		 <param name="scale_angular" value="4"/>

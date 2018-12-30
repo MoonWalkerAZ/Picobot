@@ -1,13 +1,1 @@
-<launch>
-  	<!-- RUN JOYSTICK DRIVER -->
-  	<include file="$(find picobot_remote_control)/launch/picobot_remote_control.launch"/>
-
-  	<!-- RUN ROBOT DRIVER -->
-  	<include file="$(find picobot_driver)/launch/picobot_driver.launch"/>
-
-	<!-- RUN LIDAR ta se že zažene v file-u picobot_remote_control-->
-	<!--<include file="$(find picobot_lidar)/launch/rplidar.launch" /> -->
-  	<!--<include file="$(find picobot_lidar)/launch/hectormapping.launch" />-->
-
-</launch>
-
+/etc/ros/kinetic/picobot.d/picobot_bring_up.launch
