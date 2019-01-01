@@ -1,9 +1,10 @@
 <launch>
-  <node name="rplidarNode"          pkg="picobot_lidar"  type="rplidarNode" output="log" >
+  <node name="rplidarNode"          pkg="picobot_lidar"  type="rplidarNode" output="screen" >
   <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>  
   <param name="serial_baudrate"     type="int"    value="115200"/>
   <param name="frame_id"            type="string" value="laser"/>
   <param name="inverted"            type="bool"   value="false"/>
   <param name="angle_compensate"    type="bool"   value="true"/>
   </node>
+  <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /stop_motor"/>
 </launch>
