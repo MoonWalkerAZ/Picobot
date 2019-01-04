@@ -75,11 +75,11 @@ double inf = std::numeric_limits<double>::infinity();
   }
 //ROS_INFO("velikost: %i",moznaRazpolovisca.size());
 if (moznaRazpolovisca.size() > 0){
-ROS_INFO("START"); 
+ ROS_INFO("START"); 
  for(int i=0;i<moznaRazpolovisca.size();i++){
     ROS_INFO("mozne poti (kot): %f",moznaRazpolovisca[i].kot);
   }
-ROS_INFO("STOP");
+ ROS_INFO("STOP");
 }else{
 ROS_INFO("Ni moznih poti");
 }
