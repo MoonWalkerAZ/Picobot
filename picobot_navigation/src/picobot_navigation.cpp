@@ -73,7 +73,7 @@ double inf = std::numeric_limits<double>::infinity();
       //kot
       S.kotA = tocke[i].kot;
       S.kotB = tocke[i+1].kot;
-      S.kot = atan(S.x/S.y) * (180.0/M_PI);
+      S.kot = (tocke[i].kot + tocke[i+1].kot) /2;//atan(S.x/S.y) * (180.0/M_PI);
       moznaRazpolovisca.push_back(S);
     }
   }
@@ -84,6 +84,10 @@ if (moznaRazpolovisca.size() > 0){
  for(int i=0;i<moznaRazpolovisca.size();i++){
     ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
   }
+ ROS_INFO("STOP");
+}else{
+ROS_INFO("Ni moznih poti");
+}
  moznaRazpolovisca.clear();
  razdaljeMedTockami.clear();
  tocke.clear();
@@ -91,17 +95,6 @@ if (moznaRazpolovisca.size() > 0){
  razdalje.clear();
  sinx.clear();
  cosx.clear();
- ROS_INFO("STOP");
-}else{
-ROS_INFO("Ni moznih poti");
-moznaRazpolovisca.clear();
- razdaljeMedTockami.clear(); 
- tocke.clear();
- koti.clear();
- razdalje.clear();
- sinx.clear();
- cosx.clear();
-}
 }
 
 int main(int argc, char **argv)

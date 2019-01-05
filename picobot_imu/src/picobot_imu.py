@@ -19,7 +19,7 @@ def gyroData():
     rospy.init_node('picobot_imu')
     rate = rospy.Rate(10) # 10hz
 
-    sense.set_imu_config(False, True, True)
+    sense.set_imu_config(False, True, False)
     
     while not rospy.is_shutdown():
         o = sense.get_orientation()
