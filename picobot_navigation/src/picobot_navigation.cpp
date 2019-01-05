@@ -13,6 +13,8 @@ struct Tocka{
   float x;
   float y;
   float kot;
+  float kotA;
+  float kotB;
 };
 
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
@@ -29,7 +31,7 @@ double inf = std::numeric_limits<double>::infinity();
   //shranimo razdalje od 30cm-50cm
   for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 30 && scan->ranges[i] != inf){
+    if(scan->ranges[i] <= 0.5){// && scan->ranges[i] != inf){
       razdalje.push_back(scan->ranges[i]);
       koti.push_back(i);
     }
@@ -64,24 +66,41 @@ double inf = std::numeric_limits<double>::infinity();
   vector<Tocka>moznaRazpolovisca;
   for(int i=0;i<razdaljeMedTockami.size();i++){
 
-    if(razdaljeMedTockami[i] > 0.3){
+    if(razdaljeMedTockami[i] > 0.40){
       Tocka S;//razpoloviscna tocka
       S.x = ((tocke[i].x + tocke[i+1].x)/2);
       S.y = ((tocke[i].y + tocke[i+1].y)/2);
       //kot
+      S.kotA = tocke[i].kot;
+      S.kotB = tocke[i+1].kot;
       S.kot = atan(S.x/S.y) * (180.0/M_PI);
       moznaRazpolovisca.push_back(S);
     }
   }
+
 //ROS_INFO("velikost: %i",moznaRazpolovisca.size());
 if (moznaRazpolovisca.size() > 0){
  ROS_INFO("START"); 
  for(int i=0;i<moznaRazpolovisca.size();i++){
-    ROS_INFO("mozne poti (kot): %f",moznaRazpolovisca[i].kot);
+    ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
   }
+ moznaRazpolovisca.clear();
+ razdaljeMedTockami.clear();
+ tocke.clear();
+ koti.clear();
+ razdalje.clear();
+ sinx.clear();
+ cosx.clear();
  ROS_INFO("STOP");
 }else{
 ROS_INFO("Ni moznih poti");
+moznaRazpolovisca.clear();
+ razdaljeMedTockami.clear(); 
+ tocke.clear();
+ koti.clear();
+ razdalje.clear();
+ sinx.clear();
+ cosx.clear();
 }
 }
 
