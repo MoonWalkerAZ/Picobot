@@ -59,7 +59,7 @@ double inf = std::numeric_limits<double>::infinity();
   //shranimo razdalje od 30cm-50cm
   for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 0.5){// && scan->ranges[i] != inf){
+    if(scan->ranges[i] <= 1.0){// && scan->ranges[i] != inf){
       razdalje.push_back(scan->ranges[i]);
      // koti.push_back(stopinjaTan(i));
       koti.push_back(i);
@@ -154,12 +154,21 @@ double inf = std::numeric_limits<double>::infinity();
         moznaRazpolovisca.push_back(S);
       }
 
-
+int max=0;
+int poz;
 if (moznaRazpolovisca.size() > 0){
     ROS_INFO("START");
     for(int i=0;i<moznaRazpolovisca.size();i++){
       ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-    }
+     }
+    /*for(int i=0;i<razdaljeMedTockami.size();i++){
+
+       if(razdaljeMedTockami[i] > max){
+         max = razdaljeMedTockami[i];
+         poz = i;
+       }
+    }*/
+
     ROS_INFO("STOP");
 }else{
     ROS_INFO("Ni moznih poti");
