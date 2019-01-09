@@ -121,17 +121,20 @@ double inf = std::numeric_limits<double>::infinity();
 
   for(int i=razdaljeMedTockami.size();i>razdaljeMedTockami.size()-30;i--){
 
-    if(razdaljeMedTockami[i] > 0.40){
+    for (int k=0, l=tocke.size(); k<30 && l>tocke.size()-30; k++,l--){
 
-      Tocka S;//razpoloviscna tocka
-      S.x = ((tocke[i].x + tocke[i-1].x)/2);
-      S.y = ((tocke[i].y + tocke[i-1].y)/2);
-      //kot
-      S.kotA = tocke[i].kot;
-      S.kotB = tocke[i-1].kot;
-      S.kot = atan(S.x/S.y) * (180.0/M_PI);
-      moznaRazpolovisca.push_back(S);
+      if(razdaljeMedTockami[i] > 0.40){
 
+        Tocka S;//razpoloviscna tocka
+        S.x = ((tocke[k].x + tocke[l].x)/2);
+        S.y = ((tocke[k].y + tocke[l].y)/2);
+        //kot
+        S.kotA = tocke[k].kot;
+        S.kotB = tocke[l].kot;
+        S.kot = atan(S.x/S.y) * (180.0/M_PI);
+        moznaRazpolovisca.push_back(S);
+
+      }
     }
   }
 
