@@ -102,14 +102,14 @@ double inf = std::numeric_limits<double>::infinity();
       //kot
       S.kotA = tocke[i].kot;
       S.kotB = tocke[i+1].kot;
-      S.kot = atan(S.x/S.y) * (180.0/M_PI);
+      S.kot = (tocke[i].kot + tocke[i+1].kot)/2;//atan(S.x/S.y) * (180.0/M_PI);
       moznaRazpolovisca.push_back(S);
 
     }
   }
 
   //razdalje za zgornjo polovico
-  /*int stKotov = 1;
+/*  int stKotov = 1;
 
   for (int i=0, j=tocke.size()-1; i<stKotov && j>tocke.size()-stKotov-1; i++,j--){
 
@@ -134,9 +134,9 @@ double inf = std::numeric_limits<double>::infinity();
 
       }
     }
-  }*/
+  }
 
-
+*/
   razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
 
   if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40){
@@ -147,7 +147,10 @@ double inf = std::numeric_limits<double>::infinity();
         //kot
         S.kotA = tocke[0].kot;
         S.kotB = tocke[tocke.size()-1].kot;
-        S.kot = atan(S.x/S.y) * (180.0/M_PI);
+        int tmp = ((S.kotA +S.kotB)/2)-180;
+        if (tmp < 0 ) tmp+= 359;
+	
+        S.kot = tmp; //atan(S.x/S.y) * (180.0/M_PI);
         moznaRazpolovisca.push_back(S);
       }
 
