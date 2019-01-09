@@ -46,7 +46,6 @@ int stopinjaTan(int stopinja){
     return 0;
 }
 
-int stevec =0;
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
 {
     //Zaznavanje na min 15cm.
@@ -74,7 +73,6 @@ double inf = std::numeric_limits<double>::infinity();
    sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
    cosx.push_back(cos (koti[i] * M_PI / 180));
   }
-//dodtni koti za zgornjo polovico
 
 
   //izracun x,y
@@ -113,15 +111,17 @@ double inf = std::numeric_limits<double>::infinity();
   }
 
   //razdalje za zgornjo polovico
-  for (int i=0, j=tocke.size(); i<30 && j>tocke.size()-30; i++,j--){
+  int stKotov = 1;
+
+  for (int i=0, j=tocke.size()-1; i<stKotov && j>tocke.size()-stKotov-1; i++,j--){
 
     float tmp = sqrt( pow((tocke[j].x - tocke[i].x ),2) + pow((tocke[j].y - tocke[i].y),2) );
     razdaljeMedTockami.push_back(tmp);
   }
 
-  for(int i=razdaljeMedTockami.size();i>razdaljeMedTockami.size()-30;i--){
+  for(int i=razdaljeMedTockami.size()-1;i>razdaljeMedTockami.size()-stKotov-1;i--){
 
-    for (int k=0, l=tocke.size(); k<30 && l>tocke.size()-30; k++,l--){
+    for (int k=0, l=tocke.size()-1; k<stKotov && l>tocke.size()-stKotov-1; k++,l--){
 
       if(razdaljeMedTockami[i] > 0.40){
 
@@ -142,7 +142,7 @@ double inf = std::numeric_limits<double>::infinity();
 if (moznaRazpolovisca.size() > 0){
     ROS_INFO("START");
     for(int i=0;i<moznaRazpolovisca.size();i++){
-      ROS_INFO("kotA: %f  (vmesni kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
+      ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
     }
     ROS_INFO("STOP");
 }else{
