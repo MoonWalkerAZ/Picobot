@@ -54,7 +54,6 @@ double inf = std::numeric_limits<double>::infinity();
 
 //ROS_INFO(": [kot 270, razdalja %f]", scan->ranges[270]);
 
-
   vector<float> razdalje;
   vector<int> koti;
   //shranimo razdalje od 30cm-50cm
@@ -66,7 +65,6 @@ double inf = std::numeric_limits<double>::infinity();
       koti.push_back(i);
     }
   }
-//ROS_INFO("velikost: %i",razdalje.size());
 
   for(int i=0;i<koti.size();i++){
 
@@ -111,7 +109,7 @@ double inf = std::numeric_limits<double>::infinity();
   }
 
   //razdalje za zgornjo polovico
-  int stKotov = 1;
+  /*int stKotov = 1;
 
   for (int i=0, j=tocke.size()-1; i<stKotov && j>tocke.size()-stKotov-1; i++,j--){
 
@@ -136,9 +134,24 @@ double inf = std::numeric_limits<double>::infinity();
 
       }
     }
-  }
+  }*/
 
-//vector<float>pop;
+
+  razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
+
+  if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40){
+
+        Tocka S;//razpoloviscna tocka
+        S.x = ((tocke[0].x + tocke[tocke.size()-1].x)/2);
+        S.y = ((tocke[0].y + tocke[tocke.size()-1].y)/2);
+        //kot
+        S.kotA = tocke[0].kot;
+        S.kotB = tocke[tocke.size()-1].kot;
+        S.kot = atan(S.x/S.y) * (180.0/M_PI);
+        moznaRazpolovisca.push_back(S);
+      }
+
+
 if (moznaRazpolovisca.size() > 0){
     ROS_INFO("START");
     for(int i=0;i<moznaRazpolovisca.size();i++){
