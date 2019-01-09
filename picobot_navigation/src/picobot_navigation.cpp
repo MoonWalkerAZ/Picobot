@@ -20,6 +20,7 @@ struct Tocka{
   float kot;
   float kotA;
   float kotB;
+  float razdaljaMedTockama;
 };
 
 float sumVal(vector<float> tab){
@@ -90,6 +91,7 @@ double inf = std::numeric_limits<double>::infinity();
     razdaljeMedTockami.push_back(tmp);
   }
 
+
   //preverimo ce je razdalja dovolj velika za robota
   vector<Tocka>moznaRazpolovisca;
   for(int i=0;i<razdaljeMedTockami.size();i++){
@@ -103,6 +105,7 @@ double inf = std::numeric_limits<double>::infinity();
       S.kotA = tocke[i].kot;
       S.kotB = tocke[i+1].kot;
       S.kot = (tocke[i].kot + tocke[i+1].kot)/2;//atan(S.x/S.y) * (180.0/M_PI);
+      S.razdaljaMedTockama = razdaljeMedTockami[i];
       moznaRazpolovisca.push_back(S);
 
     }
@@ -151,24 +154,25 @@ double inf = std::numeric_limits<double>::infinity();
         if (tmp < 0 ) tmp+= 359;
 	
         S.kot = tmp; //atan(S.x/S.y) * (180.0/M_PI);
+        S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
         moznaRazpolovisca.push_back(S);
       }
 
-int max=0;
-int poz;
+float max = 0.0;
+Tocka T;
 if (moznaRazpolovisca.size() > 0){
     ROS_INFO("START");
-    for(int i=0;i<moznaRazpolovisca.size();i++){
+    /*for(int i=0;i<moznaRazpolovisca.size();i++){
       ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-     }
-    /*for(int i=0;i<razdaljeMedTockami.size();i++){
+     }*/
+    for(int i=0;i<moznaRazpolovisca.size();i++){
 
-       if(razdaljeMedTockami[i] > max){
-         max = razdaljeMedTockami[i];
-         poz = i;
+       if(moznaRazpolovisca[i].razdaljaMedTockama > max){
+         max = moznaRazpolovisca[i].razdaljaMedTockama;
+         T = moznaRazpolovisca[i];
        }
-    }*/
-
+    }
+    ROS_INFO("kotA: %f  (kot): %f  kotB: %f",T.kotA,T.kot,T.kotB);
     ROS_INFO("STOP");
 }else{
     ROS_INFO("Ni moznih poti");
