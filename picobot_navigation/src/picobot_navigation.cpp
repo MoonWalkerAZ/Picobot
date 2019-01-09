@@ -93,20 +93,13 @@ double inf = std::numeric_limits<double>::infinity();
     float tmp = sqrt( pow((tocke[i+1].x - tocke[i].x ),2) + pow((tocke[i+1].y - tocke[i].y),2) );
     razdaljeMedTockami.push_back(tmp);
   }
-  //razdalje za zgornjo polovico
-  /*  for (int x=0, y=359 ; x <= 90 && y >= 269 ; x++, y--)
-    {
-    float tmp = sqrt( pow((tocke[y].x - tocke[x].x ),2) + pow((tocke[y].y - tocke[x].y),2) );
-    razdaljeMedTockami.push_back(tmp);
-    }*/
 
-
-//ROS_INFO("velikost: %i",razdaljeMedTockami.size());
   //preverimo ce je razdalja dovolj velika za robota
   vector<Tocka>moznaRazpolovisca;
   for(int i=0;i<razdaljeMedTockami.size();i++){
 
     if(razdaljeMedTockami[i] > 0.40){
+
       Tocka S;//razpoloviscna tocka
       S.x = ((tocke[i].x + tocke[i+1].x)/2);
       S.y = ((tocke[i].y + tocke[i+1].y)/2);
@@ -115,6 +108,30 @@ double inf = std::numeric_limits<double>::infinity();
       S.kotB = tocke[i+1].kot;
       S.kot = atan(S.x/S.y) * (180.0/M_PI);
       moznaRazpolovisca.push_back(S);
+
+    }
+  }
+
+  //razdalje za zgornjo polovico
+  for (int i=0, j=tocke.size(); i<30 && j>tocke.size()-30; i++,j--){
+
+    float tmp = sqrt( pow((tocke[j].x - tocke[i].x ),2) + pow((tocke[j].y - tocke[i].y),2) );
+    razdaljeMedTockami.push_back(tmp);
+  }
+
+  for(int i=razdaljeMedTockami.size();i>razdaljeMedTockami.size()-30;i--){
+
+    if(razdaljeMedTockami[i] > 0.40){
+
+      Tocka S;//razpoloviscna tocka
+      S.x = ((tocke[i].x + tocke[i-1].x)/2);
+      S.y = ((tocke[i].y + tocke[i-1].y)/2);
+      //kot
+      S.kotA = tocke[i].kot;
+      S.kotB = tocke[i-1].kot;
+      S.kot = atan(S.x/S.y) * (180.0/M_PI);
+      moznaRazpolovisca.push_back(S);
+
     }
   }
 
@@ -122,22 +139,7 @@ double inf = std::numeric_limits<double>::infinity();
 if (moznaRazpolovisca.size() > 0){
     ROS_INFO("START");
     for(int i=0;i<moznaRazpolovisca.size();i++){
-       // if (moznaRazpolovisca[i].kotA == -90.0 && moznaRazpolovisca[i].kotB == 89.0){
-         //   pop.push_back(moznaRazpolovisca[i].kot);
-        //    stevec++;
-       // }else if (stevec == 0){
-            ROS_INFO("kotA: %f  (vmesni kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-       /*     pop.clear();
-        }
-        if (stevec == 5){
-	    float average = -1*(accumulate( pop.begin(), pop.end(), 0.0)/pop.size()); 
-            //float tmp = (sumVal(pop))/stevec;
-            ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,average, moznaRazpolovisca[i].kotB);
-            stevec = 0;
-            //tmp = 0;
-            average = 0;
-	    pop.clear();
-        }*/
+      ROS_INFO("kotA: %f  (vmesni kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
     }
     ROS_INFO("STOP");
 }else{
