@@ -9,6 +9,8 @@ git push
 
 git pull origin master
 
+find -exec touch \{\} \;
+
 Pomembne poti:
 
 /home/pi/.ros/log/latest
