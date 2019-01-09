@@ -3,6 +3,11 @@
 #include <vector>
 #include <math.h>
 #include <limits>
+#include <iostream>
+#include <vector>
+#include <numeric>
+#include <string>
+#include <functional>
 
 using namespace std;
 
@@ -17,6 +22,31 @@ struct Tocka{
   float kotB;
 };
 
+float sumVal(vector<float> tab){
+    float sum = 0;
+    
+    for (int i=0; i<tab.size(); i++) {
+        sum += tab[i];
+    }
+    
+    return sum;
+}
+
+int stopinjaTan(int stopinja){
+    
+    if (stopinja >= 0 && stopinja <= 90) {
+        return 90-stopinja;
+    }else if (stopinja > 90 && stopinja <= 180){
+        return 90-stopinja;
+    }else if (stopinja > 180 && stopinja <= 270){
+        return 270-stopinja;
+    }else if (stopinja > 270 && stopinja <= 359){
+        return 270-stopinja;
+    }
+    return 0;
+}
+
+int stevec =0;
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
 {
     //Zaznavanje na min 15cm.
@@ -33,6 +63,7 @@ double inf = std::numeric_limits<double>::infinity();
 
     if(scan->ranges[i] <= 0.5){// && scan->ranges[i] != inf){
       razdalje.push_back(scan->ranges[i]);
+     // koti.push_back(stopinjaTan(i));
       koti.push_back(i);
     }
   }
@@ -40,9 +71,11 @@ double inf = std::numeric_limits<double>::infinity();
 
   for(int i=0;i<koti.size();i++){
 
-    sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
-    cosx.push_back(cos (koti[i] * M_PI / 180));
+   sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
+   cosx.push_back(cos (koti[i] * M_PI / 180));
   }
+//dodtni koti za zgornjo polovico
+
 
   //izracun x,y
   vector<Tocka> tocke;
@@ -53,7 +86,6 @@ double inf = std::numeric_limits<double>::infinity();
     tmp.kot = koti[i];
     tocke.push_back(tmp);
   }
-// ROS_INFO("velikost: %i",tocke.size());
 
   vector<float> razdaljeMedTockami;
   //izracun oddaljenosti posameznih tock med seboj
@@ -61,6 +93,14 @@ double inf = std::numeric_limits<double>::infinity();
     float tmp = sqrt( pow((tocke[i+1].x - tocke[i].x ),2) + pow((tocke[i+1].y - tocke[i].y),2) );
     razdaljeMedTockami.push_back(tmp);
   }
+  //razdalje za zgornjo polovico
+  /*  for (int x=0, y=359 ; x <= 90 && y >= 269 ; x++, y--)
+    {
+    float tmp = sqrt( pow((tocke[y].x - tocke[x].x ),2) + pow((tocke[y].y - tocke[x].y),2) );
+    razdaljeMedTockami.push_back(tmp);
+    }*/
+
+
 //ROS_INFO("velikost: %i",razdaljeMedTockami.size());
   //preverimo ce je razdalja dovolj velika za robota
   vector<Tocka>moznaRazpolovisca;
@@ -73,28 +113,43 @@ double inf = std::numeric_limits<double>::infinity();
       //kot
       S.kotA = tocke[i].kot;
       S.kotB = tocke[i+1].kot;
-      S.kot = (tocke[i].kot + tocke[i+1].kot) /2;//atan(S.x/S.y) * (180.0/M_PI);
+      S.kot = atan(S.x/S.y) * (180.0/M_PI);
       moznaRazpolovisca.push_back(S);
     }
   }
 
-//ROS_INFO("velikost: %i",moznaRazpolovisca.size());
+//vector<float>pop;
 if (moznaRazpolovisca.size() > 0){
- ROS_INFO("START"); 
- for(int i=0;i<moznaRazpolovisca.size();i++){
-    ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-  }
- ROS_INFO("STOP");
+    ROS_INFO("START");
+    for(int i=0;i<moznaRazpolovisca.size();i++){
+       // if (moznaRazpolovisca[i].kotA == -90.0 && moznaRazpolovisca[i].kotB == 89.0){
+         //   pop.push_back(moznaRazpolovisca[i].kot);
+        //    stevec++;
+       // }else if (stevec == 0){
+            ROS_INFO("kotA: %f  (vmesni kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
+       /*     pop.clear();
+        }
+        if (stevec == 5){
+	    float average = -1*(accumulate( pop.begin(), pop.end(), 0.0)/pop.size()); 
+            //float tmp = (sumVal(pop))/stevec;
+            ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,average, moznaRazpolovisca[i].kotB);
+            stevec = 0;
+            //tmp = 0;
+            average = 0;
+	    pop.clear();
+        }*/
+    }
+    ROS_INFO("STOP");
 }else{
-ROS_INFO("Ni moznih poti");
+    ROS_INFO("Ni moznih poti");
 }
- moznaRazpolovisca.clear();
- razdaljeMedTockami.clear();
- tocke.clear();
- koti.clear();
- razdalje.clear();
- sinx.clear();
- cosx.clear();
+moznaRazpolovisca.clear();
+razdaljeMedTockami.clear();
+tocke.clear();
+koti.clear();
+razdalje.clear();
+sinx.clear();
+cosx.clear();
 }
 
 int main(int argc, char **argv)
@@ -102,7 +157,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "picobot_navigation");
     ros::NodeHandle n;
 
- /*   for(int i=0;i<360;i++){
+    /*for(int i=0;i<360;i++){
 
       sinx.push_back(sin(i * M_PI / 180));//stopinje v radiane
       cosx.push_back(cos (i * M_PI / 180));
