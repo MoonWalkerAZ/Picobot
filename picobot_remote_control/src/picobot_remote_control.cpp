@@ -47,15 +47,11 @@ PicoRemoteControl::PicoRemoteControl():
 void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
 
-  nh_.getParam("/picobot_remote_control/lidar_status",lidar_status);
-
   if(joy->buttons[3] > 0){//Y
-    nh_.setParam("/picobot_remote_control/lidar_status",1);
     system("cd && rosservice call /start_motor");
     ROS_INFO("Vklaplam motor");
     }
 else if(joy->buttons[2] > 0){//B
-    nh_.setParam("/picobot_remote_control/lidar_status",0);
     system("cd && rosservice call /stop_motor");
     ROS_INFO("Izklapljam motor");
     }
