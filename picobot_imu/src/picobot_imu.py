@@ -15,7 +15,8 @@ def randomColor():
 
 
 def gyroData():
-    pub = rospy.Publisher('gyro', Float32, queue_size=10)
+    #pub = rospy.Publisher('gyro', Float32, queue_size=10)
+    
     rospy.init_node('picobot_imu')
     rate = rospy.Rate(10) # 10hz
 
@@ -23,11 +24,13 @@ def gyroData():
     
     while not rospy.is_shutdown():
         o = sense.get_orientation()
-       #pitch = o["pitch"]
-       #roll = o["roll"]
+        #pitch = o["pitch"]
+        #roll = o["roll"]
         yaw = o["yaw"]
-       #rospy.loginfo(yaw)
-        pub.publish(yaw)
+        rospy.set_param('gyroYaw', o["yaw"])
+        #rospy.loginfo(yaw)
+        #pub.publish(yaw)
+        
         rate.sleep()
 
 def main():
@@ -48,7 +51,6 @@ def main():
     b,b,b,b,b,b,b,b
     ]
     sense.set_pixels(picobot_pixels)
-   # time.sleep(5)
     gyroData()
 if __name__ == '__main__':
      main()
