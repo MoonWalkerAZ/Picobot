@@ -54,7 +54,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   //Zaznavanje na min 15cm.
   //Širina: 30cm, dolžina: 36cm robota.
 
-n.getParam("/picobot_imu/gyroYaw",gyroYaw);
+n.getParam("/gyroYaw",gyroYaw);
 
 vector<float>sinx;
 vector<float>cosx;
@@ -147,7 +147,7 @@ if (moznaRazpolovisca.size() > 0){
        T = moznaRazpolovisca[i];
      }
   }
-  ROS_INFO("kotA: %f  (kot): %f  kotB: %f",T.kotA,T.kot,T.kotB);
+  ROS_INFO("kotA: %f  (kot): %f  kotB: %f gyro: %f",T.kotA,T.kot,T.kotB,gyroYaw);
   ROS_INFO("STOP");
 }else{
   ROS_INFO("Ni moznih poti");
