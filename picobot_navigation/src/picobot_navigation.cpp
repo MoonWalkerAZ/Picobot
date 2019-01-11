@@ -1,11 +1,15 @@
 #include "ros/ros.h"
+#include <geometry_msgs/Twist.h>
 #include "sensor_msgs/LaserScan.h"
 #include <vector>
 #include <math.h>
 #include <iostream>
+#include <unistd.h>
 
 using namespace std;
 
+
+int val = 1;
 class PicobotNavigation{
 
 
@@ -25,7 +29,7 @@ private:
   void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan);
   int stopinjaTan(int stopinja);
   ros::Subscriber sub;
-
+  ros::Publisher pub;
   ros::NodeHandle n;
   float gyroYaw;
 };
@@ -33,6 +37,7 @@ private:
 PicobotNavigation::PicobotNavigation(){
 
   sub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, &PicobotNavigation::scanCallback,this);
+  pub = n.advertise<geometry_msgs::Twist>("pico/cmd_vel", 1);
 }
 
 int PicobotNavigation::stopinjaTan(int stopinja){
@@ -64,7 +69,7 @@ vector<int> koti;
 //shranimo razdalje od 30cm-50cm
 for(int i=0;i<scan->ranges.size();i++){
 
-  if(scan->ranges[i] <= 1.0){// && scan->ranges[i] != inf){
+  if(scan->ranges[i] <= 0.8){// && scan->ranges[i] != inf){
     razdalje.push_back(scan->ranges[i]);
    // koti.push_back(stopinjaTan(i));
     koti.push_back(i);
@@ -147,7 +152,39 @@ if (moznaRazpolovisca.size() > 0){
        T = moznaRazpolovisca[i];
      }
   }
-  ROS_INFO("kotA: %f  (kot): %f  kotB: %f gyro: %f",T.kotA,T.kot,T.kotB,gyroYaw);
+  geometry_msgs::Twist twist;
+  int gyro = (int)gyroYaw;
+  int vmesniKot = (int)T.kot;
+  int skupaj = vmesniKot+gyro;
+  if (skupaj > 359){
+  skupaj-=359; 
+  }
+  //skupaj -=10;
+  while(val){
+  int gyr;
+  n.getParam("/gyroYaw",gyr);
+  ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
+  
+  if (vmesniKot <= 359 && vmesniKot >= 180){
+  twist.angular.z = -0.8;
+  }else{
+  twist.angular.z = 0.8;
+  }
+  twist.linear.x = 0;
+  pub.publish(twist);
+  sleep(0.02);
+  if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr){// || skupaj+3 == gyr || skupaj+4 == gyr || skupaj+5 == gyr){ 
+  ROS_INFO("Prisel");
+  val = 0;
+  break;
+  }
+  }
+  twist.angular.z = 0;
+  twist.linear.x = 0;
+  pub.publish(twist);
+
+  //n.getParam("/gyroYaw",gyroYaw);
+  //ROS_INFO("kotA: %f  (kot): %i  kotB: %f gyro: %f",T.kotA,vmesniKot,T.kotB,gyroYaw);
   ROS_INFO("STOP");
 }else{
   ROS_INFO("Ni moznih poti");

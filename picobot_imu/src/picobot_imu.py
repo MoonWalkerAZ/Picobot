@@ -26,8 +26,8 @@ def gyroData():
         o = sense.get_orientation()
         #pitch = o["pitch"]
         #roll = o["roll"]
-        yaw = o["yaw"]
-        rospy.set_param('gyroYaw', o["yaw"])
+        yaw = (o["yaw"]-359)*-1
+        rospy.set_param('gyroYaw', yaw)
         #rospy.loginfo(yaw)
         #pub.publish(yaw)
         
