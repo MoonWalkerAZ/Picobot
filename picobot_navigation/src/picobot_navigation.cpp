@@ -9,8 +9,9 @@
 using namespace std;
 
 
-bool glejOstaleKote = false;
-bool aliJeKajPredNami = false;
+bool glejOstaleKote;
+bool aliJeKajPredNami;
+
 class PicobotNavigation{
 
 
@@ -59,6 +60,14 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
 
   //Zaznavanje na min 15cm.
   //Širina: 30cm, dolžina: 36cm robota.
+
+/*if (aliJeKajPredNami == false){
+//gremo naprej
+    geometry_msgs::Twist twist;
+    twist.linear.x = 0.3;
+    twist.angular.z = 0;
+    pub.publish(twist);
+}*/
 
   n.getParam("/gyroYaw",gyroYaw);
 
@@ -114,13 +123,22 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     S.kot = tmp; //atan(S.x/S.y) * (180.0/M_PI);
     S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
     moznaRazpolovisca.push_back(S);
+
     aliJeKajPredNami = false;
     glejOstaleKote = false;
+
   }else{
     aliJeKajPredNami = true;
     glejOstaleKote = true;
   }
 
+  if (aliJeKajPredNami == false){
+   //gremo naprej
+    geometry_msgs::Twist twist;
+    twist.linear.x = 0.3;
+    twist.angular.z = 0;
+    pub.publish(twist);
+  }
 
   if (glejOstaleKote){
 
@@ -188,13 +206,14 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       sleep(0.02);
       if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
         ROS_INFO("Prava smer");
+        aliJeKajPredNami = false;
         break;
       }
     }
     //gremo naprej
-    twist.linear.x = 0.3;
-    twist.angular.z = 0;
-    pub.publish(twist);
+    //twist.linear.x = 0.3;
+    //twist.angular.z = 0;
+    //pub.publish(twist);
 
     /*twist.angular.z = 0;
   twist.linear.x = 0;
