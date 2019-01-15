@@ -8,8 +8,6 @@
 
 using namespace std;
 
-
-bool glejOstaleKote;
 bool aliJeKajPredNami;
 
 class PicobotNavigation{
@@ -125,12 +123,12 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     moznaRazpolovisca.push_back(S);
 
     aliJeKajPredNami = false;
-    glejOstaleKote = false;
 
   }else{
     aliJeKajPredNami = true;
-    glejOstaleKote = true;
   }
+
+  ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if (aliJeKajPredNami == false){
    //gremo naprej
@@ -140,7 +138,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     pub.publish(twist);
   }
 
-  if (glejOstaleKote){
+  if (aliJeKajPredNami){//gledamo ostale kote
 
     //izracun oddaljenosti posameznih tock med seboj
     for(int i=0;i<tocke.size()-1;i++){
@@ -191,10 +189,10 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       skupaj-=359;
     }
 
-    while(aliJeKajPredNami){
+    while(aliJeKajPredNami){//ce je kaj pred robotom se obrne v drugo smer
       int gyr;
       n.getParam("/gyroYaw",gyr);
-      ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
+      //ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
 
       if (vmesniKot <= 359 && vmesniKot >= 180){
         twist.angular.z = -0.6;
@@ -210,16 +208,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
         break;
       }
     }
-    //gremo naprej
-    //twist.linear.x = 0.3;
-    //twist.angular.z = 0;
-    //pub.publish(twist);
-
-    /*twist.angular.z = 0;
-  twist.linear.x = 0;
-  pub.publish(twist);*/
-
-    //n.getParam("/gyroYaw",gyroYaw);
     //ROS_INFO("kotA: %f  (kot): %i  kotB: %f gyro: %f",T.kotA,vmesniKot,T.kotB,gyroYaw);
   }else{
     ROS_INFO("Ni moznih poti");
