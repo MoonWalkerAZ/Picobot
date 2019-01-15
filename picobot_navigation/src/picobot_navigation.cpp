@@ -9,7 +9,8 @@
 using namespace std;
 
 
-int val = 1;
+bool glejOstaleKote = false;
+bool aliJeKajPredNami = false;
 class PicobotNavigation{
 
 
@@ -42,16 +43,16 @@ PicobotNavigation::PicobotNavigation(){
 
 int PicobotNavigation::stopinjaTan(int stopinja){
 
-    if (stopinja >= 0 && stopinja <= 90) {
-        return 90-stopinja;
-    }else if (stopinja > 90 && stopinja <= 180){
-        return 90-stopinja;
-    }else if (stopinja > 180 && stopinja <= 270){
-        return 270-stopinja;
-    }else if (stopinja > 270 && stopinja <= 359){
-        return 270-stopinja;
-    }
-    return 0;
+  if (stopinja >= 0 && stopinja <= 90) {
+    return 90-stopinja;
+  }else if (stopinja > 90 && stopinja <= 180){
+    return 90-stopinja;
+  }else if (stopinja > 180 && stopinja <= 270){
+    return 270-stopinja;
+  }else if (stopinja > 270 && stopinja <= 359){
+    return 270-stopinja;
+  }
+  return 0;
 }
 
 void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
@@ -59,150 +60,165 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   //Zaznavanje na min 15cm.
   //Širina: 30cm, dolžina: 36cm robota.
 
-n.getParam("/gyroYaw",gyroYaw);
+  n.getParam("/gyroYaw",gyroYaw);
 
-vector<float>sinx;
-vector<float>cosx;
+  vector<float>sinx;
+  vector<float>cosx;
 
-vector<float> razdalje;
-vector<int> koti;
-//shranimo razdalje od 30cm-50cm
-for(int i=0;i<scan->ranges.size();i++){
+  vector<float> razdalje;
+  vector<int> koti;
+  //shranimo razdalje od 30cm-50cm
+  for(int i=0;i<scan->ranges.size();i++){
 
-  if(scan->ranges[i] <= 0.8){// && scan->ranges[i] != inf){
-    razdalje.push_back(scan->ranges[i]);
-   // koti.push_back(stopinjaTan(i));
-    koti.push_back(i);
+    if(scan->ranges[i] <= 0.8){// && scan->ranges[i] != inf){
+      razdalje.push_back(scan->ranges[i]);
+      // koti.push_back(stopinjaTan(i));
+      koti.push_back(i);
+    }
   }
-}
 
-for(int i=0;i<koti.size();i++){
+  for(int i=0;i<koti.size();i++){
 
- sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
- cosx.push_back(cos (koti[i] * M_PI / 180));
-}
-
-
-//izracun x,y
-vector<Tocka> tocke;
-for(int i=0;i<razdalje.size();i++){
-  Tocka tmp;
-  tmp.x = razdalje[i] * cosx[i];
-  tmp.y = razdalje[i] * sinx[i];
-  tmp.kot = koti[i];
-  tocke.push_back(tmp);
-}
-
-vector<float> razdaljeMedTockami;
-//izracun oddaljenosti posameznih tock med seboj
-for(int i=0;i<tocke.size()-1;i++){
-  float tmp = sqrt( pow((tocke[i+1].x - tocke[i].x ),2) + pow((tocke[i+1].y - tocke[i].y),2) );
-  razdaljeMedTockami.push_back(tmp);
-}
+    sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
+    cosx.push_back(cos (koti[i] * M_PI / 180));
+  }
 
 
-//preverimo ce je razdalja dovolj velika za robota
-vector<Tocka>moznaRazpolovisca;
-for(int i=0;i<razdaljeMedTockami.size();i++){
+  //izracun x,y
+  vector<Tocka> tocke;
+  for(int i=0;i<razdalje.size();i++){
+    Tocka tmp;
+    tmp.x = razdalje[i] * cosx[i];
+    tmp.y = razdalje[i] * sinx[i];
+    tmp.kot = koti[i];
+    tocke.push_back(tmp);
+  }
 
-  if(razdaljeMedTockami[i] > 0.40){
+  vector<float> razdaljeMedTockami;
+  vector<Tocka>moznaRazpolovisca;
+
+  //kot pred robotom
+  razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
+
+  if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40){
 
     Tocka S;//razpoloviscna tocka
-    S.x = ((tocke[i].x + tocke[i+1].x)/2);
-    S.y = ((tocke[i].y + tocke[i+1].y)/2);
+    S.x = ((tocke[0].x + tocke[tocke.size()-1].x)/2);
+    S.y = ((tocke[0].y + tocke[tocke.size()-1].y)/2);
     //kot
-    S.kotA = tocke[i].kot;
-    S.kotB = tocke[i+1].kot;
-    S.kot = (tocke[i].kot + tocke[i+1].kot)/2;//atan(S.x/S.y) * (180.0/M_PI);
-    S.razdaljaMedTockama = razdaljeMedTockami[i];
+    S.kotA = tocke[0].kot;
+    S.kotB = tocke[tocke.size()-1].kot;
+    int tmp = ((S.kotA +S.kotB)/2)-180;
+    if (tmp < 0 ) tmp+= 359;
+
+    S.kot = tmp; //atan(S.x/S.y) * (180.0/M_PI);
+    S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
     moznaRazpolovisca.push_back(S);
-
+    aliJeKajPredNami = false;
+    glejOstaleKote = false;
+  }else{
+    aliJeKajPredNami = true;
+    glejOstaleKote = true;
   }
-}
 
-razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
 
-if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40){
+  if (glejOstaleKote){
 
-      Tocka S;//razpoloviscna tocka
-      S.x = ((tocke[0].x + tocke[tocke.size()-1].x)/2);
-      S.y = ((tocke[0].y + tocke[tocke.size()-1].y)/2);
-      //kot
-      S.kotA = tocke[0].kot;
-      S.kotB = tocke[tocke.size()-1].kot;
-      int tmp = ((S.kotA +S.kotB)/2)-180;
-      if (tmp < 0 ) tmp+= 359;
-
-      S.kot = tmp; //atan(S.x/S.y) * (180.0/M_PI);
-      S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
-      moznaRazpolovisca.push_back(S);
+    //izracun oddaljenosti posameznih tock med seboj
+    for(int i=0;i<tocke.size()-1;i++){
+      float tmp = sqrt( pow((tocke[i+1].x - tocke[i].x ),2) + pow((tocke[i+1].y - tocke[i].y),2) );
+      razdaljeMedTockami.push_back(tmp);
     }
 
-float max = 0.0;
-Tocka T;
-if (moznaRazpolovisca.size() > 0){
-  ROS_INFO("START");
-  /*for(int i=0;i<moznaRazpolovisca.size();i++){
+
+    //preverimo ce je razdalja dovolj velika za robota
+
+    for(int i=0;i<razdaljeMedTockami.size();i++){
+
+      if(razdaljeMedTockami[i] > 0.40){
+
+        Tocka S;//razpoloviscna tocka
+        S.x = ((tocke[i].x + tocke[i+1].x)/2);
+        S.y = ((tocke[i].y + tocke[i+1].y)/2);
+        //kot
+        S.kotA = tocke[i].kot;
+        S.kotB = tocke[i+1].kot;
+        S.kot = (tocke[i].kot + tocke[i+1].kot)/2;//atan(S.x/S.y) * (180.0/M_PI);
+        S.razdaljaMedTockama = razdaljeMedTockami[i];
+        moznaRazpolovisca.push_back(S);
+
+      }
+    }
+  }
+
+
+  float max = 0.0;
+  Tocka T;
+  if (moznaRazpolovisca.size() > 0){
+    /*for(int i=0;i<moznaRazpolovisca.size();i++){
     ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
    }*/
-  for(int i=0;i<moznaRazpolovisca.size();i++){
+    for(int i=0;i<moznaRazpolovisca.size();i++){
 
-     if(moznaRazpolovisca[i].razdaljaMedTockama > max){
-       max = moznaRazpolovisca[i].razdaljaMedTockama;
-       T = moznaRazpolovisca[i];
-     }
-  }
-  geometry_msgs::Twist twist;
-  int gyro = (int)gyroYaw;
-  int vmesniKot = (int)T.kot;
-  int skupaj = vmesniKot+gyro;
-  if (skupaj > 359){
-  skupaj-=359; 
-  }
-  //skupaj -=10;
-  while(val){
-  int gyr;
-  n.getParam("/gyroYaw",gyr);
-  ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
-  
-  if (vmesniKot <= 359 && vmesniKot >= 180){
-  twist.angular.z = -0.8;
+      if(moznaRazpolovisca[i].razdaljaMedTockama > max){
+        max = moznaRazpolovisca[i].razdaljaMedTockama;
+        T = moznaRazpolovisca[i];
+      }
+    }
+    geometry_msgs::Twist twist;
+    int gyro = (int)gyroYaw;
+    int vmesniKot = (int)T.kot;
+    int skupaj = vmesniKot+gyro;
+    if (skupaj > 359){
+      skupaj-=359;
+    }
+
+    while(aliJeKajPredNami){
+      int gyr;
+      n.getParam("/gyroYaw",gyr);
+      ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
+
+      if (vmesniKot <= 359 && vmesniKot >= 180){
+        twist.angular.z = -0.6;
+      }else{
+        twist.angular.z = 0.6;
+      }
+      twist.linear.x = 0;
+      pub.publish(twist);
+      sleep(0.02);
+      if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
+        ROS_INFO("Prava smer");
+        break;
+      }
+    }
+    //gremo naprej
+    twist.linear.x = 0.3;
+    twist.angular.z = 0;
+    pub.publish(twist);
+
+    /*twist.angular.z = 0;
+  twist.linear.x = 0;
+  pub.publish(twist);*/
+
+    //n.getParam("/gyroYaw",gyroYaw);
+    //ROS_INFO("kotA: %f  (kot): %i  kotB: %f gyro: %f",T.kotA,vmesniKot,T.kotB,gyroYaw);
   }else{
-  twist.angular.z = 0.8;
+    ROS_INFO("Ni moznih poti");
   }
-  twist.linear.x = 0;
-  pub.publish(twist);
-  sleep(0.02);
-  if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr){// || skupaj+3 == gyr || skupaj+4 == gyr || skupaj+5 == gyr){ 
-  ROS_INFO("Prisel");
-  val = 0;
-  break;
-  }
-  }
-  twist.angular.z = 0;
-  twist.linear.x = 0;
-  pub.publish(twist);
-
-  //n.getParam("/gyroYaw",gyroYaw);
-  //ROS_INFO("kotA: %f  (kot): %i  kotB: %f gyro: %f",T.kotA,vmesniKot,T.kotB,gyroYaw);
-  ROS_INFO("STOP");
-}else{
-  ROS_INFO("Ni moznih poti");
-}
-moznaRazpolovisca.clear();
-razdaljeMedTockami.clear();
-tocke.clear();
-koti.clear();
-razdalje.clear();
-sinx.clear();
-cosx.clear();
+  moznaRazpolovisca.clear();
+  razdaljeMedTockami.clear();
+  tocke.clear();
+  koti.clear();
+  razdalje.clear();
+  sinx.clear();
+  cosx.clear();
 
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "picobot_navigation");
-    PicobotNavigation picobot_navigation;
-    ros::spin();
-    return 0;
+  ros::init(argc, argv, "picobot_navigation");
+  PicobotNavigation picobot_navigation;
+  ros::spin();
+  return 0;
 }
