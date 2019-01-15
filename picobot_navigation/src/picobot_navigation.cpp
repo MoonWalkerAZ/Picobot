@@ -13,7 +13,6 @@ bool aliJeKajPredNami;
 
 class PicobotNavigation{
 
-
 public:
   PicobotNavigation();
 
@@ -60,14 +59,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   //Zaznavanje na min 15cm.
   //Širina: 30cm, dolžina: 36cm robota.
 
-/*if (aliJeKajPredNami == false){
-//gremo naprej
-    geometry_msgs::Twist twist;
-    twist.linear.x = 0.3;
-    twist.angular.z = 0;
-    pub.publish(twist);
-}*/
-double inf = std::numeric_limits<double>::infinity();
+  double inf = std::numeric_limits<double>::infinity();
 
   geometry_msgs::Twist twist;
   n.getParam("/gyroYaw",gyroYaw);
@@ -126,15 +118,15 @@ double inf = std::numeric_limits<double>::infinity();
     moznaRazpolovisca.push_back(S);
 
     aliJeKajPredNami = false;
-}else{
+  }else{
     aliJeKajPredNami = true;
     ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
   }
 
- // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
+  // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if (aliJeKajPredNami == false){
-   //gremo naprej
+    //gremo naprej
     twist.linear.x = 0.3;
     twist.angular.z = 0;
     pub.publish(twist);
@@ -150,7 +142,6 @@ double inf = std::numeric_limits<double>::infinity();
 
 
     //preverimo ce je razdalja dovolj velika za robota
-
     for(int i=0;i<razdaljeMedTockami.size();i++){
 
       if(razdaljeMedTockami[i] > 0.40){
@@ -164,7 +155,6 @@ double inf = std::numeric_limits<double>::infinity();
         S.kot = (tocke[i].kot + tocke[i+1].kot)/2;//atan(S.x/S.y) * (180.0/M_PI);
         S.razdaljaMedTockama = razdaljeMedTockami[i];
         moznaRazpolovisca.push_back(S);
-
       }
     }
   }
