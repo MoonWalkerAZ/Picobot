@@ -5,6 +5,7 @@
 #include <math.h>
 #include <iostream>
 #include <unistd.h>
+#include <limits>
 
 using namespace std;
 
@@ -66,6 +67,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     twist.angular.z = 0;
     pub.publish(twist);
 }*/
+double inf = std::numeric_limits<double>::infinity();
 
   geometry_msgs::Twist twist;
   n.getParam("/gyroYaw",gyroYaw);
@@ -124,12 +126,12 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     moznaRazpolovisca.push_back(S);
 
     aliJeKajPredNami = false;
-
-  }else{
+}else{
     aliJeKajPredNami = true;
+    ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
   }
 
-  //ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
+ // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if (aliJeKajPredNami == false){
    //gremo naprej
@@ -182,9 +184,8 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       }
     }
 
-    int gyro = (int)gyroYaw;
     int vmesniKot = (int)T.kot;
-    int skupaj = vmesniKot+gyro;
+    int skupaj = vmesniKot+gyroYaw;
     if (skupaj > 359){
       skupaj-=359;
     }
@@ -193,7 +194,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       int gyr;
       n.getParam("/gyroYaw",gyr);
       ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
-
       if (vmesniKot <= 359 && vmesniKot >= 180){
         twist.angular.z = -0.6;
       }else{
@@ -201,7 +201,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       }
       twist.linear.x = 0;
       pub.publish(twist);
-      sleep(0.02);
       if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
         ROS_INFO("Prava smer");
         break;
@@ -211,7 +210,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   }else{
     ROS_INFO("Ni moznih poti");
   }
-
 
   twist.linear.x = 0;
   twist.angular.z = 0;
