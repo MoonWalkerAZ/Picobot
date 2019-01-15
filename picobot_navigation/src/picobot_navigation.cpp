@@ -123,12 +123,12 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     moznaRazpolovisca.push_back(S);
 
     aliJeKajPredNami = false;
-
   }else{
     aliJeKajPredNami = true;
+    ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
   }
 
-  ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
+ // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if (aliJeKajPredNami == false){
    //gremo naprej
@@ -182,9 +182,8 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       }
     }
     geometry_msgs::Twist twist;
-    int gyro = (int)gyroYaw;
     int vmesniKot = (int)T.kot;
-    int skupaj = vmesniKot+gyro;
+    int skupaj = vmesniKot+gyroYaw;
     if (skupaj > 359){
       skupaj-=359;
     }
@@ -192,19 +191,17 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     while(aliJeKajPredNami){//ce je kaj pred robotom se obrne v drugo smer
       int gyr;
       n.getParam("/gyroYaw",gyr);
-      //ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
+      ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
 
       if (vmesniKot <= 359 && vmesniKot >= 180){
-        twist.angular.z = -0.6;
+        twist.angular.z = -1.0;
       }else{
-        twist.angular.z = 0.6;
+        twist.angular.z = 1.0;
       }
       twist.linear.x = 0;
       pub.publish(twist);
-      sleep(0.02);
       if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
         ROS_INFO("Prava smer");
-        aliJeKajPredNami = false;
         break;
       }
     }

@@ -3,7 +3,7 @@ import rospy
 from sense_hat import SenseHat
 import time
 from random import randint
-from std_msgs.msg import Float32
+from std_msgs.msg import *
 
 sense = SenseHat()
 
@@ -15,7 +15,7 @@ def randomColor():
 
 
 def gyroData():
-    #pub = rospy.Publisher('gyro', Float32, queue_size=10)
+    pub = rospy.Publisher('gyro', Int32, queue_size=10)
     
     rospy.init_node('picobot_imu')
     rate = rospy.Rate(10) # 10hz
@@ -29,7 +29,7 @@ def gyroData():
         yaw = (o["yaw"]-359)*-1
         rospy.set_param('gyroYaw', yaw)
         #rospy.loginfo(yaw)
-        #pub.publish(yaw)
+        pub.publish(int(yaw))
         
         rate.sleep()
 
