@@ -67,6 +67,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     pub.publish(twist);
 }*/
 
+  geometry_msgs::Twist twist;
   n.getParam("/gyroYaw",gyroYaw);
 
   vector<float>sinx;
@@ -128,11 +129,10 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     aliJeKajPredNami = true;
   }
 
-  ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
+  //ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if (aliJeKajPredNami == false){
    //gremo naprej
-    geometry_msgs::Twist twist;
     twist.linear.x = 0.3;
     twist.angular.z = 0;
     pub.publish(twist);
@@ -181,7 +181,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
         T = moznaRazpolovisca[i];
       }
     }
-    geometry_msgs::Twist twist;
+
     int gyro = (int)gyroYaw;
     int vmesniKot = (int)T.kot;
     int skupaj = vmesniKot+gyro;
@@ -192,7 +192,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     while(aliJeKajPredNami){//ce je kaj pred robotom se obrne v drugo smer
       int gyr;
       n.getParam("/gyroYaw",gyr);
-      //ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
+      ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
 
       if (vmesniKot <= 359 && vmesniKot >= 180){
         twist.angular.z = -0.6;
@@ -204,7 +204,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       sleep(0.02);
       if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
         ROS_INFO("Prava smer");
-        aliJeKajPredNami = false;
         break;
       }
     }
@@ -212,6 +211,12 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   }else{
     ROS_INFO("Ni moznih poti");
   }
+
+
+  twist.linear.x = 0;
+  twist.angular.z = 0;
+  pub.publish(twist);
+
   moznaRazpolovisca.clear();
   razdaljeMedTockami.clear();
   tocke.clear();
@@ -219,7 +224,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   razdalje.clear();
   sinx.clear();
   cosx.clear();
-
 }
 
 int main(int argc, char **argv)
