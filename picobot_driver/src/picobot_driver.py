@@ -54,7 +54,7 @@ class Driver:
 
     rospy.init_node('picobot_driver')
     self._last_received = rospy.get_time()
-    self._timeout = rospy.get_param('~timeout', 5)
+    self._timeout = rospy.get_param('~timeout', 10)
     self._max_speed = rospy.get_param('~max_speed', 0.1)#potrebujemo za nadzor angularne hitrosti
     self._wheel_base = rospy.get_param('~wheel_base', 0.091)
 

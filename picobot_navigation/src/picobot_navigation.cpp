@@ -5,6 +5,7 @@
 #include <math.h>
 #include <iostream>
 #include <unistd.h>
+#include <limits>
 
 using namespace std;
 
@@ -66,6 +67,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     twist.angular.z = 0;
     pub.publish(twist);
 }*/
+double inf = std::numeric_limits<double>::infinity();
 
   n.getParam("/gyroYaw",gyroYaw);
 
@@ -123,7 +125,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     moznaRazpolovisca.push_back(S);
 
     aliJeKajPredNami = false;
-  }else{
+}else{
     aliJeKajPredNami = true;
     ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
   }
@@ -192,11 +194,10 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       int gyr;
       n.getParam("/gyroYaw",gyr);
       ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
-
       if (vmesniKot <= 359 && vmesniKot >= 180){
-        twist.angular.z = -1.0;
+        twist.angular.z = -0.6;
       }else{
-        twist.angular.z = 1.0;
+        twist.angular.z = 0.6;
       }
       twist.linear.x = 0;
       pub.publish(twist);
