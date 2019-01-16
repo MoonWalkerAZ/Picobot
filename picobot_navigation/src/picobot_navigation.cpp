@@ -72,7 +72,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   //shranimo razdalje od 30cm-50cm
   for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 0.8){// && scan->ranges[i] != inf){
+    if(scan->ranges[i] <= 1.0){// && scan->ranges[i] != inf){
       razdalje.push_back(scan->ranges[i]);
       // koti.push_back(stopinjaTan(i));
       koti.push_back(i);
