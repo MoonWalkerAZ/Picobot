@@ -31,7 +31,7 @@ private:
   ros::Subscriber sub;
   ros::Publisher pub;
   ros::NodeHandle n;
-  float gyroYaw;
+  int gyroYaw;
 };
 
 PicobotNavigation::PicobotNavigation(){
@@ -72,7 +72,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   //shranimo razdalje od 30cm-50cm
   for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 0.8){// && scan->ranges[i] != inf){
+    if(scan->ranges[i] <= 1.0){// && scan->ranges[i] != inf){
       razdalje.push_back(scan->ranges[i]);
       // koti.push_back(stopinjaTan(i));
       koti.push_back(i);
@@ -124,10 +124,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     aliJeKajPredNami = false;
   }else{
     aliJeKajPredNami = true;
-   // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
   }
-
-  // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if (aliJeKajPredNami == false){
     //gremo naprej
@@ -136,7 +133,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     pub.publish(twist);
   }
 
-  //if (aliJeKajPredNami){//gledamo ostale kote
+  if (aliJeKajPredNami){//gledamo ostale kote
 
     //izracun oddaljenosti posameznih tock med seboj
     for(int i=0;i<tocke.size()-1;i++){
@@ -161,52 +158,51 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
         moznaRazpolovisca.push_back(S);
       }
     }
-  //}
 
 
-  float max = 0.0;
-  Tocka T;
-  ROS_INFO("moznaRazpolovisca vel: %i",(int)moznaRazpolovisca.size());
-  if (moznaRazpolovisca.size() > 0){
-    //for(int i=0;i<moznaRazpolovisca.size();i++){
-   // ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-   //}
-    for(int i=0;i<moznaRazpolovisca.size();i++){
+    float max = 0.0;
+    Tocka T;
+    if (moznaRazpolovisca.size() > 0){
+      //for(int i=0;i<moznaRazpolovisca.size();i++){
+      // ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
+      //}
+      for(int i=0;i<moznaRazpolovisca.size();i++){
 
-      if(moznaRazpolovisca[i].razdaljaMedTockama > max){
-        max = moznaRazpolovisca[i].razdaljaMedTockama;
-        T = moznaRazpolovisca[i];
+        if(moznaRazpolovisca[i].razdaljaMedTockama > max){
+          max = moznaRazpolovisca[i].razdaljaMedTockama;
+          T = moznaRazpolovisca[i];
+        }
       }
-    }
 
-    int vmesniKot = (int)T.kot;
-    int skupaj = vmesniKot+gyroYaw;
-    if (skupaj > 359){
-      skupaj-=359;
-    }
-
-    while(aliJeKajPredNami){//ce je kaj pred robotom se obrne v drugo smer
-      int gyr;
-      n.getParam("/gyroYaw",gyr);
-      ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
-      if (vmesniKot <= 359 && vmesniKot >= 180){
-        twist.angular.z = -0.6;
-      }else{
-        twist.angular.z = 0.6;
+      int vmesniKot = (int)T.kot;
+      int skupaj = vmesniKot+gyroYaw;
+      if (skupaj > 359){
+        skupaj-=359;
       }
-      twist.linear.x = 0;
-      pub.publish(twist);
-      if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
-        ROS_INFO("Prava smer");
+
+      while(aliJeKajPredNami){//ce je kaj pred robotom se obrne v drugo smer
+        int gyr;
+        n.getParam("/gyroYaw",gyr);
+        ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyr);
+        if (vmesniKot <= 359 && vmesniKot >= 180){
+          twist.angular.z = -0.6;
+        }else{
+          twist.angular.z = 0.6;
+        }
         twist.linear.x = 0;
-        twist.angular.z = 0; 
         pub.publish(twist);
-        break;
+        if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
+          ROS_INFO("Prava smer");
+          twist.linear.x = 0;
+          twist.angular.z = 0;
+          pub.publish(twist);
+          break;
+        }
       }
+      //ROS_INFO("kotA: %f  (kot): %i  kotB: %f gyro: %f",T.kotA,vmesniKot,T.kotB,gyroYaw);
+    }else{
+      ROS_INFO("Ni moznih poti");
     }
-    //ROS_INFO("kotA: %f  (kot): %i  kotB: %f gyro: %f",T.kotA,vmesniKot,T.kotB,gyroYaw);
-  }else{
-    ROS_INFO("Ni moznih poti");
   }
 
   moznaRazpolovisca.clear();
