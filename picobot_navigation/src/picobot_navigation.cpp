@@ -193,6 +193,9 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       pub.publish(twist);
       if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
         ROS_INFO("Prava smer");
+        twist.linear.x = 0;
+        twist.angular.z = 0;
+        pub.publish(twist);
         break;
       }
     }
@@ -200,10 +203,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   }else{
     ROS_INFO("Ni moznih poti");
   }
-
-  twist.linear.x = 0;
-  twist.angular.z = 0;
-  pub.publish(twist);
 
   moznaRazpolovisca.clear();
   razdaljeMedTockami.clear();
