@@ -101,10 +101,8 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
 
   //kot pred robotom
   razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
-<<<<<<< HEAD
-=======
+
   // ROS_INFO("razdaljaMedTockama (velikost): %i",razdaljeMedTockami.size());
->>>>>>> a888f9c776b042c44d53ef34acbe6ec767230b70
   ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
 
