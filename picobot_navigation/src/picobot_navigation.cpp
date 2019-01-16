@@ -101,6 +101,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
 
   //kot pred robotom
   razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
+  ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
   if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40){
 
@@ -132,7 +133,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     pub.publish(twist);
   }
 
-  if (aliJeKajPredNami){//gledamo ostale kote
+  //if (aliJeKajPredNami){//gledamo ostale kote
 
     //izracun oddaljenosti posameznih tock med seboj
     for(int i=0;i<tocke.size()-1;i++){
@@ -157,11 +158,12 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
         moznaRazpolovisca.push_back(S);
       }
     }
-  }
+  //}
 
 
   float max = 0.0;
   Tocka T;
+  ROS_INFO("moznaRazpolovisca vel: %i",(int)moznaRazpolovisca.size());
   if (moznaRazpolovisca.size() > 0){
     /*for(int i=0;i<moznaRazpolovisca.size();i++){
     ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
