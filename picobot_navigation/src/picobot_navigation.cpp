@@ -101,9 +101,14 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
 
   //kot pred robotom
   razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
+<<<<<<< HEAD
+=======
+  // ROS_INFO("razdaljaMedTockama (velikost): %i",razdaljeMedTockami.size());
+>>>>>>> a888f9c776b042c44d53ef34acbe6ec767230b70
   ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
 
-  if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40){
+
+  if(razdaljeMedTockami[razdaljeMedTockami.size()-1] > 0.40 ){
 
     Tocka S;//razpoloviscna tocka
     S.x = ((tocke[0].x + tocke[tocke.size()-1].x)/2);
@@ -121,7 +126,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     aliJeKajPredNami = false;
   }else{
     aliJeKajPredNami = true;
-    ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
+   // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
   }
 
   // ROS_INFO("razdaljaMedTockama: %f",razdaljeMedTockami[razdaljeMedTockami.size()-1]);
@@ -165,9 +170,9 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   Tocka T;
   ROS_INFO("moznaRazpolovisca vel: %i",(int)moznaRazpolovisca.size());
   if (moznaRazpolovisca.size() > 0){
-    /*for(int i=0;i<moznaRazpolovisca.size();i++){
-    ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-   }*/
+    //for(int i=0;i<moznaRazpolovisca.size();i++){
+   // ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
+   //}
     for(int i=0;i<moznaRazpolovisca.size();i++){
 
       if(moznaRazpolovisca[i].razdaljaMedTockama > max){
@@ -196,7 +201,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       if (skupaj == gyr || skupaj+1 == gyr || skupaj+2 == gyr || skupaj-1 == gyr || skupaj-2 == gyr){
         ROS_INFO("Prava smer");
         twist.linear.x = 0;
-        twist.angular.z = 0;
+        twist.angular.z = 0; 
         pub.publish(twist);
         break;
       }
