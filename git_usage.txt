@@ -32,6 +32,10 @@ Lokacija bring up file v etc:
 
 Nastavimo robot_upstart:
 http://docs.ros.org/jade/api/robot_upstart/html/
+
+sudo apt-get install ros-kinetic-robot-upstart
+rosrun robot_upstart install picobot_bring_up/launch/picobot_bring_up.launch
+
 Linkamo bring up direktorija:
 
 ln -s /etc/ros/kinetic/picobot.d/picobot_bring_up.launch /home/pi/catkin_ws/src/Picobot/picobot_bring_up/launch/picobot_bring_up.launch
@@ -68,3 +72,12 @@ dtmparam=i2c_arm=on
 Dodamo v /etc/modules:
 ic2-bcm2708
 i2c-dev
+
+Paketi :
+sudo apt-get install ros-kinetic-joy
+sudo apt-get install ros-kinetic-teleop-tools
+sudo apt-get install ros-kinetic-teleop-tools-msgs
+sudo apt-get install ros-kinetic-teleop-twist-joy
+sudo apt-get install ros-kinetic-teleop-twist-keyboard
+
+ros-kinetic-rplidar-ros
