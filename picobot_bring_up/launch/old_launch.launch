@@ -1,6 +1,6 @@
 <launch>
         <!-- RUN JOYSTICK DRIVER -->
-        <include file="$(find picobot_remote_control)/launch/picobot_remote_con$
+        <include file="$(find picobot_remote_control)/launch/picobot_remote_control.launch" />
 
         <!-- RUN ROBOT DRIVER -->
         <include file="$(find picobot_driver)/launch/picobot_driver.launch"/>
