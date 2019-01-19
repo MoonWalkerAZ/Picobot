@@ -6,9 +6,10 @@ from sensor_msgs.msg import Joy
 import RPi.GPIO as GPIO
 import time
 
+#GPIO pini (BCM)
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-#test sprememb
+
 frekvenca = 120 # konstanta, za notranjo uporabo
 
 class Motor:
