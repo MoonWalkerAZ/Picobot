@@ -10,7 +10,7 @@ import time
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 #test sprememb
-_FREQUENCY = 20 # konstanta, za notranjo uporabo
+_FREQUENCY = 150 # konstanta, za notranjo uporabo
 
 def _porezi(value,min,max):
     """Zagotovimo da je vrednost med 0(min) in 100(max) """
