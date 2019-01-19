@@ -3,7 +3,7 @@ import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
-import RPi.GPIO as GPIO  # Import the GPIO Library
+import RPi.GPIO as GPIO
 import time
 
 # Set the GPIO modes
