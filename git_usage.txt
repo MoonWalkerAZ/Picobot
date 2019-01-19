@@ -30,12 +30,14 @@ Lokacija bring up file v etc:
 /etc/ros/kinetic/picobot.d	
 
 
+Nastavimo robot_upstart:
+http://docs.ros.org/jade/api/robot_upstart/html/
 Linkamo bring up direktorija:
 
 ln -s /etc/ros/kinetic/picobot.d/picobot_bring_up.launch /home/pi/catkin_ws/src/Picobot/picobot_bring_up/launch/picobot_bring_up.launch
 
-Dodamo v /etc/rc.local
 
+Dodamo v /etc/rc.local
 chmod 777 /dev/mem
 chmod 777 /dev/gpiomem
 chmod 777 /dev/ttyUSB0
@@ -66,4 +68,3 @@ dtmparam=i2c_arm=on
 Dodamo v /etc/modules:
 ic2-bcm2708
 i2c-dev
-
