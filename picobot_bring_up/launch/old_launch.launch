@@ -1,0 +1,14 @@
+<launch>
+        <!-- RUN JOYSTICK DRIVER -->
+        <include file="$(find picobot_remote_control)/launch/picobot_remote_con$
+
+        <!-- RUN ROBOT DRIVER -->
+        <include file="$(find picobot_driver)/launch/picobot_driver.launch"/>
+
+        <!-- RUN SENSE HAT (IMU) -->
+        <include file="$(find picobot_imu)/launch/picobot_imu.launch"/>
+
+        <!-- RUN LIDAR -->
+        <include file="$(find picobot_lidar)/launch/rplidar.launch" />
+</launch>
+

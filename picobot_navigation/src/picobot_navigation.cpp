@@ -11,7 +11,7 @@ using namespace std;
 
 bool aliJeKajPredNami;
 bool prvic = true;
-//bool gyroIzenacil = false;
+bool gyroIzenacil = false;
 
 class PicobotNavigation{
 
@@ -124,9 +124,9 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
     moznaRazpolovisca.push_back(S);
 
-    //if (gyroIzenacil == true){
+    if (gyroIzenacil == true){
     aliJeKajPredNami = false;
-    //}
+    }
   }else{
     aliJeKajPredNami = true;
   }
@@ -187,7 +187,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       vmesniKot = (int)T.kot;
       skupaj = vmesniKot+gyroYaw;
       prvic = false;
-     // gyroIzenacil = false;
+      gyroIzenacil = false;
       }
 
       if (skupaj == gyroYaw || skupaj+1 == gyroYaw || skupaj+2 == gyroYaw || skupaj-1 == gyroYaw || skupaj-2 == gyroYaw){
@@ -196,7 +196,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       twist.linear.x = 0;
       pub.publish(twist);
       prvic = true;
-      //gyroIzenacil = true;
+      gyroIzenacil = true;
       }
       if (skupaj > 359){
         skupaj-=359;
