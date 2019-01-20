@@ -10,7 +10,15 @@ import time
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-frekvenca = 150 # konstanta, za notranjo uporabo
+frekvenca = 100 # konstanta, za notranjo uporabo
+
+def porezi(val,min,max):
+    """Zagotovimo da je vrednost med 0(min) in 100(max) """
+    if val < min:
+       return min
+    elif val > max:
+       return max
+    return val
 
 class Motor:
 
@@ -25,14 +33,6 @@ class Motor:
 
        self.naprejPwm = GPIO.PWM(naprejPin, frekvenca)
        self.nazajPwm = GPIO.PWM(nazajPin, frekvenca)
-
-   def porezi(val,min,max):
-    """Zagotovimo da je vrednost med 0(min) in 100(max) """
-    if val < min:
-       return min
-    elif val > max:
-       return max
-    return val
 
    def premik(self, hitrostOdst):
 

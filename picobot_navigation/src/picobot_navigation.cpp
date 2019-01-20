@@ -11,7 +11,7 @@ using namespace std;
 
 bool aliJeKajPredNami;
 bool prvic = true;
-bool gyroIzenacil = false;
+//bool gyroIzenacil = false;
 
 class PicobotNavigation{
 
@@ -78,7 +78,7 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   //shranimo razdalje od 30cm-50cm
   for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 1.0){// && scan->ranges[i] != inf){
+    if(scan->ranges[i] <= 0.75){// && scan->ranges[i] != inf){
       razdalje.push_back(scan->ranges[i]);
       // koti.push_back(stopinjaTan(i));
       koti.push_back(i);
@@ -124,9 +124,9 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
     moznaRazpolovisca.push_back(S);
 
-    if (gyroIzenacil == true){
+  //  if (gyroIzenacil == true){
     aliJeKajPredNami = false;
-    }
+   // }
   }else{
     aliJeKajPredNami = true;
   }
@@ -187,16 +187,16 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
       vmesniKot = (int)T.kot;
       skupaj = vmesniKot+gyroYaw;
       prvic = false;
-      gyroIzenacil = false;
+     // gyroIzenacil = false;
       }
 
-      if (skupaj == gyroYaw || skupaj+1 == gyroYaw || skupaj+2 == gyroYaw || skupaj-1 == gyroYaw || skupaj-2 == gyroYaw){
+      if (skupaj-10 == gyroYaw || skupaj == gyroYaw || skupaj-5 == gyroYaw || skupaj+5 == gyroYaw || skupaj+10 == gyroYaw){
       aliJeKajPredNami = false;
       twist.angular.z = 0;
       twist.linear.x = 0;
       pub.publish(twist);
       prvic = true;
-      gyroIzenacil = true;
+      //gyroIzenacil = true;
       }
       if (skupaj > 359){
         skupaj-=359;
@@ -204,10 +204,10 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
 
      if (vmesniKot <= 300 && vmesniKot >= 180){
           ROS_INFO("obracam v desno");
-          twist.angular.z = -0.6;
+          twist.angular.z = -0.35;
         }else{
           ROS_INFO("obracam v levo");
-          twist.angular.z = 0.6;
+          twist.angular.z = 0.35;
         }
         twist.linear.x = 0;
         pub.publish(twist);
