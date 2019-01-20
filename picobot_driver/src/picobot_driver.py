@@ -10,7 +10,7 @@ import time
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-frekvenca = 120 # konstanta, za notranjo uporabo
+frekvenca = 150 # konstanta, za notranjo uporabo
 
 class Motor:
 
