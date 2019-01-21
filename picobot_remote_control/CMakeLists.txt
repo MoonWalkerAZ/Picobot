@@ -201,4 +201,3 @@ include_directories(
 # catkin_add_nosetests(test)
 add_executable(picobot_remote_control src/picobot_remote_control.cpp)
 target_link_libraries(picobot_remote_control ${catkin_LIBRARIES})
-add_dependencies(picobot_remote_control picobot_remote_control_generate_messages_cpp)

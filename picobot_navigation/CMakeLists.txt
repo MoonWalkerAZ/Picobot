@@ -126,7 +126,9 @@ include_directories(
 
 add_executable(picobot_navigation src/picobot_navigation.cpp)
 target_link_libraries(picobot_navigation ${catkin_LIBRARIES})
-add_dependencies(picobot_navigation picobot_navigation_generate_messages_cpp)
+
+add_executable(picobot_auto src/picobot_auto.cpp)
+target_link_libraries(picobot_auto ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

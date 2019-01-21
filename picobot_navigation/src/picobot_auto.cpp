@@ -9,15 +9,10 @@
 
 using namespace std;
 
-bool aliJeKajPredNami;
-bool prvic = true;
-//bool razdaljaDesno;
-//bool razdaljaLevo;
-
-class PicobotNavigation{
+class PicobotAuto{
 
 public:
-  PicobotNavigation();
+  PicobotAuto();
 
   struct Tocka{
     float x;
@@ -34,54 +29,30 @@ private:
   ros::Subscriber sub;
   ros::Publisher pub;
   ros::NodeHandle n;
-  int gyroYaw;
-  int skupaj;
-  int vmesniKot;
 };
 
-PicobotNavigation::PicobotNavigation(){
+PicobotAuto::PicobotAuto(){
 
-  skupaj = 0;
-  vmesniKot = 0;
-  sub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, &PicobotNavigation::scanCallback,this);
+  sub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, &PicobotAuto::scanCallback,this);
   pub = n.advertise<geometry_msgs::Twist>("pico/cmd_vel", 1);
 }
 
-int PicobotNavigation::stopinjaTan(int stopinja){
-
-  if (stopinja >= 0 && stopinja <= 90) {
-    return 90-stopinja;
-  }else if (stopinja > 90 && stopinja <= 180){
-    return 90-stopinja;
-  }else if (stopinja > 180 && stopinja <= 270){
-    return 270-stopinja;
-  }else if (stopinja > 270 && stopinja <= 359){
-    return 270-stopinja;
-  }
-  return 0;
-}
-
-void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
+void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
   //Zaznavanje na min 15cm.
   //sirina: 30cm, dolžina: 36cm robota.
 
-  double inf = std::numeric_limits<double>::infinity();
-
   geometry_msgs::Twist twist;
-  n.getParam("/gyroYaw",gyroYaw);
 
   vector<float>sinx;
   vector<float>cosx;
-
   vector<float> razdalje;
   vector<int> koti;
-  //shranimo razdalje od 30cm-50cm
+
   for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 0.75){// && scan->ranges[i] != inf){
+    if(scan->ranges[i] <= 0.75){
       razdalje.push_back(scan->ranges[i]);
-      // koti.push_back(stopinjaTan(i));
       koti.push_back(i);
     }
   }
@@ -91,7 +62,6 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
     cosx.push_back(cos (koti[i] * M_PI / 180));
   }
-
 
   //izracun x,y
   vector<Tocka> tocke;
@@ -106,10 +76,9 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
   vector<float> razdaljeMedTockami;
   vector<Tocka>moznaRazpolovisca;
 
-  //kot pred robotom
   razdaljeMedTockami.push_back(sqrt( pow((tocke[tocke.size()-1].x - tocke[0].x ),2) + pow((tocke[tocke.size()-1].y - tocke[0].y),2) ));
 
-  if(razdaljeMedTockami[0] > 0.4){
+  if(razdaljeMedTockami[0] > 0.40){
 
     Tocka S;//razpoloviscna tocka
     S.x = ((tocke[0].x + tocke[tocke.size()-1].x)/2);
@@ -120,30 +89,10 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
     int tmp = ((S.kotA + S.kotB)/2)-180;
     if (tmp < 0 ) tmp+= 359;
 
-    S.kot = tmp; //atan(S.x/S.y) * (180.0/M_PI);
+    S.kot = tmp;
     S.razdaljaMedTockama = razdaljeMedTockami[razdaljeMedTockami.size()-1];
     moznaRazpolovisca.push_back(S);
- 
-    //ROS_INFO("razdalja levo: %f value: %i",razdalje[5], razdaljaLevo);
-    //ROS_INFO("razdalja desno: %f value: %i",razdalje[razdalje.size()-16],razdaljaDesno);
-    aliJeKajPredNami = false;
-
-  }else{
-    aliJeKajPredNami = true;
   }
-
-  if (aliJeKajPredNami == false){
-    //gremo naprej
-    twist.linear.x = 0.3;
-    twist.angular.z = 0;
-    pub.publish(twist);
-  }else{
-    twist.linear.x = 0;
-    twist.angular.z = 0;
-    pub.publish(twist);
-  }
-
-  if (aliJeKajPredNami){//gledamo ostale kote
 
     //izracun oddaljenosti posameznih tock med seboj
     for(int i=0;i<tocke.size()-1;i++){
@@ -184,40 +133,10 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
         }
       }
 
-      if (prvic){
-      vmesniKot = (int)T.kot;
-      skupaj = vmesniKot+gyroYaw;
-      prvic = false;
-     // gyroIzenacil = false;
-      }
-
-      if (skupaj-10 == gyroYaw || skupaj == gyroYaw || skupaj-5 == gyroYaw || skupaj+5 == gyroYaw || skupaj+10 == gyroYaw){
-      //aliJeKajPredNami = false;
-      twist.angular.z = 0;
-      twist.linear.x = 0;
-      pub.publish(twist);
-      prvic = true;
-      //gyroIzenacil = true;
-      }
-      if (skupaj > 359){
-        skupaj-=359;
-       }
-
-     if (vmesniKot <= 300 && vmesniKot >= 180){
-          ROS_INFO("obracam v desno");
-          twist.angular.z = -0.35;
-        }else{
-          ROS_INFO("obracam v levo");
-          twist.angular.z = 0.35;
-        }
-        twist.linear.x = 0;
-        pub.publish(twist);
-      ROS_INFO("kot %i skupaj: %i gyro: %i",vmesniKot,skupaj,gyroYaw);
 
     }else{
       ROS_INFO("Ni moznih poti");
     }
-  } 
 
   moznaRazpolovisca.clear();
   razdaljeMedTockami.clear();
@@ -230,8 +149,8 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "picobot_navigation");
-  PicobotNavigation picobot_navigation;
+  ros::init(argc, argv, "picobot_auto");
+  PicobotAuto picobot_auto;
   ros::spin();
   return 0;
 }
