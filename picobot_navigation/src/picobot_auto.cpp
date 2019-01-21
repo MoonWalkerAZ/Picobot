@@ -8,9 +8,7 @@
 #include <limits>
 
 using namespace std;
-
-
-bool zavijDesno, zavijLevo;
+int stevec = 0;
 
 class PicobotAuto{
 
@@ -54,59 +52,65 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
   double inf = std::numeric_limits<double>::infinity();
 
-  /*for(int i=0;i<scan->ranges.size();i++){
+  for(int i=0;i<scan->ranges.size();i++){
 
-    if(scan->ranges[i] <= 0.75){
+   // if(scan->ranges[i] <= 0.75){
       razdalje.push_back(scan->ranges[i]);
       koti.push_back(i);
-    }
-  }*/
+    //}
+  }
+//ROS_INFO("kot 180: %f",scan->ranges[180]);
 
   //preverjamo razdalje na kotih od 225-180 in 180-135
 
-  int razdalja = 0.3;
+  float razdalja = 0.6;
+  bool zavijDesno, zavijLevo;
 
-  float minLeva = 0;
+  float minLeva = 0.0;
   for(int i=180;i<225;i++){
-    if(minLeva < scan->ranges[i]){
-      minLeva = scan->ranges[i];
+    if(minLeva < razdalje[i] && razdalje[i] != inf){
+      minLeva = razdalje[i];
     }
   }
-
-  if (minLeva < razdalja || minLeva == inf){
-    zavijLevo = false;
+  if (minLeva < razdalja){ 
+   zavijLevo = false;
   }else{
-    zavijLevo = true;
+   zavijLevo = true; 
   }
+ //ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
 
-  float minDesna = 0;
-  for(int i = 135;i<179;i++){
-    if(minDesna < scan->ranges[i]){
-      minDesna = scan->ranges[i];
+  float minDesna = 0.0;
+  for(int i = 135;i<181;i++){
+    if(minDesna < razdalje[i] && razdalje[i] != inf){
+      minDesna = razdalje[i];
     }
   }
-
-  if (minDesna < razdalja || minDesna == inf){
-    zavijDesno = false;
+  if (minDesna < razdalja){ 
+   zavijDesno = false;
   }else{
-    zavijDesno = true;
+   zavijDesno = true; 
   }
-  ROS_INFO("minDesna: %f minLeva %f", minDesna, minLeva);
-  ROS_INFO("zavijDesno: %i zavijLevo %i", zavijDesno, zavijLevo);
 
-  if (zavijDesno && zavijLevo){
-      //gremo naprej
-      ROS_INFO("gremo naprej");
-    }else if (zavijLevo){
-    //zavijemo levo
-    ROS_INFO("zavijemo levo");
-  }else if (zavijDesno){
-    //zavijemo desno
-    ROS_INFO("zavijemo desno");
-  }else if (!zavijDesno && !zavijLevo){
-    //ni izhoda oz. probamo lahko iti nazaj ?
-    ROS_INFO("ni izhoda oz. probamo lahko iti nazaj ?");
-  }
+ //ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
+if (zavijDesno && zavijLevo) {
+ROS_INFO("gremo naravnost !!!");
+ twist.linear.x = -0.2;
+ twist.angular.z = 0;
+ pub.publish(twist);
+}else{
+ if(minDesna > minLeva){
+  ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
+  twist.linear.x = 0;
+  twist.angular.z = -0.35;
+  pub.publish(twist);
+ }else{
+ ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
+ twist.linear.x = 0;
+ twist.angular.z = 0.35;
+ pub.publish(twist); 
+ }
+}
+
   /*
   for(int i=0;i<koti.size();i++){
 
