@@ -15,10 +15,10 @@ public:
 
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
-  
 
+ 
   ros::NodeHandle nh_;
-  
+
   int lidar_status;
   int linear_, angular_;
   double l_scale_, a_scale_;
@@ -30,7 +30,7 @@ private:
 PicoRemoteControl::PicoRemoteControl():
   linear_(1),//levo,desno 1
   angular_(0),//naprej,nazaj 0
-  a_scale_(1.5),
+  a_scale_(2),
   l_scale_(0.8)
 {
 
@@ -55,11 +55,19 @@ else if(joy->buttons[2] > 0){//B
     system("cd && rosservice call /stop_motor");
     ROS_INFO("Izklapljam motor");
     }
-else if (joy->buttons[0] > 0) {//X
-  //system("cd && roslaunch /home/pi/catkin_ws/src/Picobot/picobot_imu/launch/picobot_imu.launch");
-  //ROS_INFO("Vklapljam HAT");
-}
 
+if (joy->buttons[0] > 0) {//X
+l_scale_+=0.5;
+if(l_scale_ >= 1){
+l_scale_ = 0.9;
+}
+}
+if (joy->buttons[1] > 0) {//A
+l_scale_-=0.5;
+if(l_scale_ <= 0){
+l_scale_=0.2;
+}
+}
 
 
   geometry_msgs::Twist twist;

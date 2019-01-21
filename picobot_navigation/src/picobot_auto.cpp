@@ -10,7 +10,7 @@
 using namespace std;
 
 bool zataknil;
-int stevec = 0;
+
 class PicobotAuto{
 
 public:
@@ -31,6 +31,7 @@ private:
   ros::Subscriber sub;
   ros::Publisher pub;
   ros::NodeHandle n;
+  int gyroYaw;
 };
 
 PicobotAuto::PicobotAuto(){
@@ -64,7 +65,10 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
   //preverjamo razdalje na kotih od 225-180 in 180-135
 
-  float razdalja = 0.3;
+  n.getParam("/gyroYaw",gyroYaw);
+ // ROS_INFO("gyro: %i",gyroYaw);
+
+  float razdalja = 0.33;
   bool zavijDesno, zavijLevo, pojdiNaprej;
 
   float minLeva = inf;
@@ -92,32 +96,22 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
   }
 
 if (zavijDesno && zavijLevo) {
- ROS_INFO("gremo naravnost !!!");
- twist.linear.x = -0.2;
+// ROS_INFO("gremo naravnost !!!");
+ twist.linear.x = -0.3;
  twist.angular.z = 0;
  pub.publish(twist);
  }else{
  if(minDesna > minLeva){
-  ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
+//  ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
   twist.linear.x = 0;
   twist.angular.z = -0.35;
   pub.publish(twist);
  }else{
- ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
+// ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
  twist.linear.x = 0;
  twist.angular.z = 0.35;
  pub.publish(twist); 
  }
-}
-int minL = minLeva*10;
-int minD = minDesna*10;
-if ( minL == minD || minL+1 == minD || minL-1 == minD || minL == minD+1 || minL == minD-1){
-stevec++;
-}
-if (stevec == 10){
-ROS_INFO("zataknil");
-zataknil = true;
-stevec = 0;
 }
 
   /*
