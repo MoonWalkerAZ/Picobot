@@ -8,8 +8,9 @@
 #include <limits>
 
 using namespace std;
-int stevec = 0;
 
+bool zataknil;
+int stevec = 0;
 class PicobotAuto{
 
 public:
@@ -52,52 +53,50 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
   double inf = std::numeric_limits<double>::infinity();
 
-  for(int i=0;i<scan->ranges.size();i++){
+  //for(int i=0;i<scan->ranges.size();i++){
 
    // if(scan->ranges[i] <= 0.75){
-      razdalje.push_back(scan->ranges[i]);
-      koti.push_back(i);
+      //razdalje.push_back(scan->ranges[i]);
+      //koti.push_back(i);
     //}
-  }
+  //}
 //ROS_INFO("kot 180: %f",scan->ranges[180]);
 
   //preverjamo razdalje na kotih od 225-180 in 180-135
 
-  float razdalja = 0.6;
-  bool zavijDesno, zavijLevo;
+  float razdalja = 0.3;
+  bool zavijDesno, zavijLevo, pojdiNaprej;
 
-  float minLeva = 0.0;
+  float minLeva = inf;
   for(int i=180;i<225;i++){
-    if(minLeva < razdalje[i] && razdalje[i] != inf){
-      minLeva = razdalje[i];
+    if(minLeva > scan->ranges[i] && scan->ranges[i] != inf){
+      minLeva = scan->ranges[i];
     }
   }
-  if (minLeva < razdalja){ 
+  if (minLeva < razdalja || scan->ranges[240] < 0.24){ 
    zavijLevo = false;
   }else{
    zavijLevo = true; 
   }
- //ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
 
-  float minDesna = 0.0;
+  float minDesna = inf;
   for(int i = 135;i<181;i++){
-    if(minDesna < razdalje[i] && razdalje[i] != inf){
-      minDesna = razdalje[i];
+    if(minDesna > scan->ranges[i] && scan->ranges[i] != inf){
+      minDesna = scan->ranges[i];
     }
   }
-  if (minDesna < razdalja){ 
+  if (minDesna < razdalja || scan->ranges[120] < 0.24){ 
    zavijDesno = false;
   }else{
    zavijDesno = true; 
   }
 
- //ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
 if (zavijDesno && zavijLevo) {
-ROS_INFO("gremo naravnost !!!");
+ ROS_INFO("gremo naravnost !!!");
  twist.linear.x = -0.2;
  twist.angular.z = 0;
  pub.publish(twist);
-}else{
+ }else{
  if(minDesna > minLeva){
   ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
   twist.linear.x = 0;
@@ -109,6 +108,16 @@ ROS_INFO("gremo naravnost !!!");
  twist.angular.z = 0.35;
  pub.publish(twist); 
  }
+}
+int minL = minLeva*10;
+int minD = minDesna*10;
+if ( minL == minD || minL+1 == minD || minL-1 == minD || minL == minD+1 || minL == minD-1){
+stevec++;
+}
+if (stevec == 10){
+ROS_INFO("zataknil");
+zataknil = true;
+stevec = 0;
 }
 
   /*

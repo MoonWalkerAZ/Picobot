@@ -126,7 +126,11 @@ void PicobotNavigation::scanCallback(const sensor_msgs::LaserScan::ConstPtr& sca
  
     //ROS_INFO("razdalja levo: %f value: %i",razdalje[5], razdaljaLevo);
     //ROS_INFO("razdalja desno: %f value: %i",razdalje[razdalje.size()-16],razdaljaDesno);
+   
+    if(scan->ranges[60] != inf || scan->ranges[60] > 0.3 || scan->ranges[299] != inf || scan->ranges[299] > 0.3){
+     ROS_INFO("scan->ranges[299]: %f",scan->ranges[299]);
     aliJeKajPredNami = false;
+    }
 
   }else{
     aliJeKajPredNami = true;
