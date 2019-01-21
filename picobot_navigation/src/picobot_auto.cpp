@@ -9,6 +9,9 @@
 
 using namespace std;
 
+
+bool zavijDesno, zavijLevo;
+
 class PicobotAuto{
 
 public:
@@ -49,14 +52,60 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
   vector<float> razdalje;
   vector<int> koti;
 
-  for(int i=0;i<scan->ranges.size();i++){
+  /*for(int i=0;i<scan->ranges.size();i++){
 
     if(scan->ranges[i] <= 0.75){
       razdalje.push_back(scan->ranges[i]);
       koti.push_back(i);
     }
+  }*/
+
+  //preverjamo razdalje na kotih od 225-180 in 180-135
+
+  int razdalja = 0.3;
+
+  float minLeva = 0;
+  for(int i=180;i<225;i++){
+    if(minLeva < scan->ranges[i]){
+      minLeva = scan->ranges[i];
+    }
   }
 
+  if (minLeva < razdalja){
+    zavijLevo = false;
+  }else{
+    zavijLevo = true;
+  }
+
+  float minDesna = 0;
+  for(int i = 135;i<179;i++){
+    if(minDesna < scan->ranges[i]){
+      minDesna = scan->ranges[i];
+    }
+  }
+
+  if (minDesna < razdalja){
+    zavijDesno = false;
+  }else{
+    zavijDesno = true;
+  }
+  ROS_INFO("minDesna: %f minLeva %f", minDesna, minLeva);
+  ROS_INFO("zavijDesno: %i zavijLevo %i", zavijDesno, zavijLevo);
+
+  if (zavijLevo){
+    //zavijemo levo
+    ROS_INFO("zavijemo levo");
+  }else if (zavijDesno){
+    //zavijemo desno
+    ROS_INFO("zavijemo desno");
+  }else if (!zavijDesno && !zavijLevo){
+    //ni izhoda oz. probamo lahko iti nazaj ?
+    ROS_INFO("ni izhoda oz. probamo lahko iti nazaj ?");
+  }else if (zavijDesno && zavijLevo){
+    //gremo naprej
+    ROS_INFO("gremo naprej");
+  }
+  /*
   for(int i=0;i<koti.size();i++){
 
     sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
@@ -145,6 +194,7 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
   razdalje.clear();
   sinx.clear();
   cosx.clear();
+  */
 }
 
 int main(int argc, char **argv)
