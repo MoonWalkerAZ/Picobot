@@ -6,10 +6,13 @@
 #include <iostream>
 #include <unistd.h>
 #include <limits>
+#include <stdlib.h>
 
 using namespace std;
 
-bool zataknil;
+bool zataknil = false;
+int stevec = 0;
+float globKot;
 
 class PicobotAuto{
 
@@ -53,20 +56,19 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
   vector<int> koti;
 
   double inf = std::numeric_limits<double>::infinity();
+ // float hitrosti[5] = {0.35,0.40,0.45,0.50,0.55};
 
-  //for(int i=0;i<scan->ranges.size();i++){
+  for(int i=0;i<scan->ranges.size();i++){
 
-   // if(scan->ranges[i] <= 0.75){
-      //razdalje.push_back(scan->ranges[i]);
-      //koti.push_back(i);
-    //}
-  //}
-//ROS_INFO("kot 180: %f",scan->ranges[180]);
+    if(scan->ranges[i] <= 0.75){
+      razdalje.push_back(scan->ranges[i]);
+      koti.push_back(i);
+    }
+  }
 
   //preverjamo razdalje na kotih od 225-180 in 180-135
 
-  n.getParam("/gyroYaw",gyroYaw);
- // ROS_INFO("gyro: %i",gyroYaw);
+  //n.getParam("/gyroYaw",gyroYaw);
 
   float razdalja = 0.33;
   bool zavijDesno, zavijLevo, pojdiNaprej;
@@ -94,27 +96,38 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
   }else{
    zavijDesno = true; 
   }
-
+if (zataknil == false){
 if (zavijDesno && zavijLevo) {
-// ROS_INFO("gremo naravnost !!!");
+ //ROS_INFO("gremo naravnost !!!");
  twist.linear.x = -0.3;
  twist.angular.z = 0;
  pub.publish(twist);
  }else{
  if(minDesna > minLeva){
-//  ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
+  //ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
   twist.linear.x = 0;
   twist.angular.z = -0.35;
   pub.publish(twist);
  }else{
-// ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
- twist.linear.x = 0;
- twist.angular.z = 0.35;
- pub.publish(twist); 
+ //ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
+  twist.linear.x = 0;
+  twist.angular.z = 0.35;
+  pub.publish(twist); 
  }
 }
+}
+if (!zavijDesno && !zavijLevo){//zataknil
+zataknil = true;
+ROS_INFO("zataknil");
+stevec++;
+}else if(zavijDesno && zavijLevo){
+ROS_INFO("konec zatika");
+stevec = 0;
+zataknil = false;
+}
 
-  /*
+  if(zataknil){
+
   for(int i=0;i<koti.size();i++){
 
     sinx.push_back(sin(koti[i] * M_PI / 180));//stopinje v radiane
@@ -162,7 +175,7 @@ if (zavijDesno && zavijLevo) {
     //preverimo ce je razdalja dovolj velika za robota
     for(int i=0;i<razdaljeMedTockami.size();i++){
 
-      if(razdaljeMedTockami[i] > 0.45){
+      if(razdaljeMedTockami[i] > 0.4){
 
         Tocka S;//razpoloviscna tocka
         S.x = ((tocke[i].x + tocke[i+1].x)/2);
@@ -180,9 +193,9 @@ if (zavijDesno && zavijLevo) {
     float max = 0.0;
     Tocka T;
     if (moznaRazpolovisca.size() > 0){
-      for(int i=0;i<moznaRazpolovisca.size();i++){
-       ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
-      }
+      //for(int i=0;i<moznaRazpolovisca.size();i++){
+      // ROS_INFO("kotA: %f  (kot): %f  kotB: %f",moznaRazpolovisca[i].kotA,moznaRazpolovisca[i].kot,moznaRazpolovisca[i].kotB);
+      //}
       for(int i=0;i<moznaRazpolovisca.size();i++){
 
         if(moznaRazpolovisca[i].razdaljaMedTockama > max){
@@ -191,11 +204,23 @@ if (zavijDesno && zavijLevo) {
         }
       }
 
+       if(stevec == 1){
+       globKot = T.kot;
+       }
+
+       if (globKot <= 359 && globKot >= 180){
+          ROS_INFO("obracam v levo, globKot %f", globKot);
+          twist.angular.z = 0.35;
+        }else {
+          ROS_INFO("obracam v desno, globKot %f", globKot);
+          twist.angular.z = -0.35;
+        }
+          twist.linear.x = 0;
+          pub.publish(twist);
 
     }else{
       ROS_INFO("Ni moznih poti");
     }
-
   moznaRazpolovisca.clear();
   razdaljeMedTockami.clear();
   tocke.clear();
@@ -203,7 +228,7 @@ if (zavijDesno && zavijLevo) {
   razdalje.clear();
   sinx.clear();
   cosx.clear();
-  */
+  }
 }
 
 int main(int argc, char **argv)
