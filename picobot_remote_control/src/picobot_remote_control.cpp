@@ -28,10 +28,10 @@ private:
 
 
 PicoRemoteControl::PicoRemoteControl():
-  linear_(1),//levo,desno 1
-  angular_(0),//naprej,nazaj 0
-  a_scale_(1.8),
-  l_scale_(0.8)
+  linear_(1),//naprej,nazaj 1
+  angular_(0),//levo desno 0
+  a_scale_(1.4),
+  l_scale_(0.4)
 {
 
   //nh_.param("axis_linear", linear_, linear_);
@@ -59,22 +59,22 @@ else if(joy->buttons[2] > 0){//B
 if (joy->buttons[4] > 0){//LB
 if (joy->buttons[0] > 0) {//X
 l_scale_+=0.5;
-a_scale_ +=0.5;
+a_scale_ +=0.7;
 if(l_scale_ >= 1){
 l_scale_ = 0.9;
 }
-if(a_scale_ >= 2){
-a_scale_ = 2;
+if(a_scale_ >= 2.1){
+a_scale_ = 2.1;
 }
 }
 if (joy->buttons[1] > 0) {//A
 l_scale_-=0.5;
-a_scale_ -=0.5;
+a_scale_ -=0.7;
 if(l_scale_ <= 0){
-l_scale_=0.2;
+l_scale_=0.4;
 }
-if(a_scale_ <=0){
-a_scale_ = 0.5;
+if(a_scale_ <=0.7){
+a_scale_ = 1.4;
 }
 }
 }
