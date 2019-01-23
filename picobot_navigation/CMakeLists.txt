@@ -130,6 +130,9 @@ target_link_libraries(picobot_navigation ${catkin_LIBRARIES})
 add_executable(picobot_auto src/picobot_auto.cpp)
 target_link_libraries(picobot_auto ${catkin_LIBRARIES})
 
+add_executable(picobot_auto_naprej src/picobot_auto_naprej.cpp)
+target_link_libraries(picobot_auto_naprej ${catkin_LIBRARIES})
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/picobot_navigation.cpp

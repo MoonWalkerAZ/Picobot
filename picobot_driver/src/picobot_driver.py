@@ -52,9 +52,8 @@ class Driver:
 
     rospy.init_node('picobot_driver')
     self.nazadnjeSprejel = rospy.get_time()
-    self.premor =  10
-    self.maxHitorst =  0.1#potrebujemo za nadzor angularne hitrosti
-    self.osKolesa =  0.091
+    self.premor =  15
+    self.osKolesa =  0.175 #polovica dolzine med kolesoma 0.35/2 = 0.175
 
     # Nastavimo pine za motorje
     self.R_EN_levi = 5
@@ -81,8 +80,8 @@ class Driver:
       angular = message.angular.z
 
        # Izracunamo vrtenje koles v m/s
-      levaHitrost = (angular/self.maxHitorst) * self.osKolesa/2 - linear
-      desnaHitrost = (angular/self.maxHitorst)* self.osKolesa/2 + linear
+      levaHitrost = (angular/0.15) * self.osKolesa / 2 - (linear/0.5)
+      desnaHitrost = (angular/0.15) * self.osKolesa / 2 + (linear/0.5)
       self.levaHitrostProcent = (100 * levaHitrost)
       self.desnaHitrostProcent = (100 * desnaHitrost)
 

@@ -233,7 +233,7 @@ zataknil = false;
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "picobot_auto");
+  ros::init(argc, argv, "picobot_auto_naprej");
   PicobotAuto picobot_auto;
   ros::spin();
   return 0;
