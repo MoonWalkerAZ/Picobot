@@ -189,11 +189,11 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
       }
 
       if (globKot <= 359 && globKot >= 180){
-        ROS_INFO("obracam v levo, globKot %f", globKot);
-        twist.angular.z = 0.35;
-      }else {
         ROS_INFO("obracam v desno, globKot %f", globKot);
         twist.angular.z = -0.35;
+      }else {
+        ROS_INFO("obracam v levo, globKot %f", globKot);
+        twist.angular.z = 0.35;
       }
       twist.linear.x = 0;
       pub.publish(twist);
