@@ -78,11 +78,13 @@ void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   //zagon auto navigation
   if (joy->buttons[7] > 0){//RT
     system("cd && rosservice call /start_motor");
-    n.setParam("/autoNavigation",1);
+    ROS_INFO("prizigam");
+    n.setParam("/picobot_remote_control/autoNavigation",1);
   }
   //izklop navigation
   if (joy->buttons[6] > 0){//LT
-    n.setParam("/autoNavigation",0);
+    ROS_INFO("ugasam");
+    n.setParam("/picobot_remote_control/autoNavigation",0);
     system("cd && rosservice call /stop_motor");
   }
 

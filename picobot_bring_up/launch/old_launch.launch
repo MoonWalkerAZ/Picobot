@@ -10,5 +10,8 @@
 
         <!-- RUN LIDAR -->
         <include file="$(find picobot_lidar)/launch/rplidar.launch" />
+
+        <!-- NAVIGATION -->
+        <include file="$(find picobot_navigation)/launch/picobot_auto_naprej.launch" />
 </launch>
 

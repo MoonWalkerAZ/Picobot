@@ -49,7 +49,7 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
   //sirina: 30cm, dolžina: 36cm robota.
 
   int autoNavigation;
-  n.getParam("/autoNavigation",autoNavigation);
+  n.getParam("/picobot_remote_control/autoNavigation",autoNavigation);
 
   if(autoNavigation == 1){
 
