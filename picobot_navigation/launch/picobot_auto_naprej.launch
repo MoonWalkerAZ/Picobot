@@ -1,0 +1,5 @@
+<launch>
+  <node name="picobot_auto_naprej" pkg="picobot_navigation" type="picobot_auto_naprej" output="screen">
+  </node>
+</launch>
+
