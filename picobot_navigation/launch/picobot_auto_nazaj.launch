@@ -1,0 +1,4 @@
+<launch>
+  <node name="picobot_auto_nazaj" pkg="picobot_navigation" type="picobot_auto_nazaj" output="screen">
+  </node>
+</launch>

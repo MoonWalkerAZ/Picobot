@@ -232,7 +232,7 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "picobot_auto");
+  ros::init(argc, argv, "picobot_auto_nazaj");
   PicobotAuto picobot_auto;
   ros::spin();
   return 0;

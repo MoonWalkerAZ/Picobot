@@ -123,12 +123,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-
-add_executable(picobot_navigation src/picobot_navigation.cpp)
-target_link_libraries(picobot_navigation ${catkin_LIBRARIES})
-
-add_executable(picobot_auto src/picobot_auto.cpp)
-target_link_libraries(picobot_auto ${catkin_LIBRARIES})
+add_executable(picobot_auto_nazaj src/picobot_auto_nazaj.cpp)
+target_link_libraries(picobot_auto_nazaj ${catkin_LIBRARIES})
 
 add_executable(picobot_auto_naprej src/picobot_auto_naprej.cpp)
 target_link_libraries(picobot_auto_naprej ${catkin_LIBRARIES})

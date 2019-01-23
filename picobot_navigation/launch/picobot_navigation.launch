@@ -1,4 +1,0 @@
-<launch>
-  <node name="picobot_navigation" pkg="picobot_navigation" type="picobot_navigation" output="screen">
-  </node>
-</launch>
