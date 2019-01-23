@@ -99,7 +99,7 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 if (zataknil == false){
 if (zavijDesno && zavijLevo) {
  //ROS_INFO("gremo naravnost !!!");
- twist.linear.x = -0.3;
+ twist.linear.x = -0.1;  //optimalna hitrost
  twist.angular.z = 0;
  pub.publish(twist);
  }else{
