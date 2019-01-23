@@ -18,6 +18,7 @@ private:
 
   ros::NodeHandle n;
 
+  int autoNavigation;
   int linear, angular;
   double linScale, angScale;
   ros::Publisher velPub;
@@ -50,29 +51,7 @@ void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   }
 
 
-  if (joy->buttons[4] > 0){//LB
-    if (joy->buttons[0] > 0) {//X visja hitrost
-      linScale+=0.5;
-      angScale +=0.5;
-      if(linScale >= 1){
-        linScale = 0.9;
-      }
-      if(angScale >= 2){
-        angScale = 2;
-      }
-    }
-    if (joy->buttons[1] > 0) {//A nizja hitrost
-      linScale-=0.5;
-      angScale -=0.5;
-      if(linScale <= 0){
-        linScale=0.2;
-      }
-      if(angScale <=0){
-        angScale = 0.5;
-      }
-    }
-  }
-
+  //spremembe hitrosti
   if (joy->buttons[4] > 0){//LB
     if (joy->buttons[0] > 0) {//X
       linScale+=0.5;
@@ -94,6 +73,17 @@ void PicoRemoteControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
         angScale = 1.4;
       }
     }
+  }
+
+  //zagon auto navigation
+  if (joy->buttons[7] > 0){//RT
+    system("cd && rosservice call /start_motor");
+    n.setParam("/autoNavigation",1);
+  }
+  //izklop navigation
+  if (joy->buttons[6] > 0){//LT
+    n.setParam("/autoNavigation",0);
+    system("cd && rosservice call /stop_motor");
   }
 
   geometry_msgs::Twist twist;
