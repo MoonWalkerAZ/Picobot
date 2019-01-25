@@ -16,6 +16,8 @@ Ostalo:
 rostopic pub -r 10 pico/cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.6}}'
 
 
+printenv | grep ROS -> vidimo ros podatke
+
 Pomembne poti:
 
 /home/pi/.ros/log/latest

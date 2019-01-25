@@ -6,7 +6,7 @@
         <include file="$(find picobot_driver)/launch/picobot_driver.launch"/>
 
         <!-- RUN SENSE HAT (IMU) -->
-        <include file="$(find picobot_imu)/launch/picobot_imu.launch"/>
+        <!-- <include file="$(find picobot_imu)/launch/picobot_imu.launch"/> -->
 
         <!-- RUN LIDAR -->
         <include file="$(find picobot_lidar)/launch/rplidar.launch" />
