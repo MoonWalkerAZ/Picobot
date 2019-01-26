@@ -110,20 +110,12 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
         if(minDesna > minLeva){
           //ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
           twist.linear.x = 0;
-<<<<<<< HEAD
           twist.angular.z = -0.55;
-=======
-          twist.angular.z = -0.45;
->>>>>>> 640ca499634e923f91ea739fba2c52924f92bf79
           pub.publish(twist);
         }else{
           //ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
           twist.linear.x = 0;
-<<<<<<< HEAD
           twist.angular.z = 0.55;
-=======
-          twist.angular.z = 0.45;
->>>>>>> 640ca499634e923f91ea739fba2c52924f92bf79
           pub.publish(twist);
         }
       }
@@ -203,17 +195,10 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
         if (globKot <= 359 && globKot >= 180){
           ROS_INFO("obracam v desno, globKot %f", globKot);
-<<<<<<< HEAD
           twist.angular.z = -0.55;
         }else {
           ROS_INFO("obracam v levo, globKot %f", globKot);
           twist.angular.z = 0.55;
-=======
-          twist.angular.z = -0.45;
-        }else {
-          ROS_INFO("obracam v levo, globKot %f", globKot);
-          twist.angular.z = 0.45;
->>>>>>> 640ca499634e923f91ea739fba2c52924f92bf79
         }
         twist.linear.x = 0;
         pub.publish(twist);
