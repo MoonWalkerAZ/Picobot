@@ -31,9 +31,15 @@ E-mail: kint.zhao@slamtec.com
     <param name="map_size" value="1024"/>
     <param name="map_start_x" value="0.5"/>
     <param name="map_start_y" value="0.5"/>
-
   </node>
 
+<node pkg="hector_geotiff" type="geotiff_node" name="hector_geotiff_node" output="screen" launch-prefix="nice -n 15">
+    <param name="map_file_path" type="string" value="$(find picobot_lidar)/launch/maps" />
+    <param name="map_file_base_name" type="string" value="MappingBox" />
+    <param name="geotiff_save_period" type="double" value="15" />
+  </node>
+
+<node pkg="hector_map_server" type="hector_map_server" name="hector_map_server" output="screen" />
 
 
 </launch>

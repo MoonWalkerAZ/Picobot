@@ -6,5 +6,5 @@
   <param name="inverted"            type="bool"   value="false"/>
   <param name="angle_compensate"    type="bool"   value="true"/>
   </node>
-  <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /stop_motor"/>
+<node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /stop_motor"/>
 </launch>
