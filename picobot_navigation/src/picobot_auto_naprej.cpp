@@ -74,7 +74,7 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
     //n.getParam("/gyroYaw",gyroYaw);
 
-    float razdalja = 0.33;
+    float razdalja = 0.36;
     bool zavijDesno, zavijLevo;
 
     float minLeva = inf;
@@ -103,19 +103,19 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     if (zataknil == false){
       if (zavijDesno && zavijLevo) {
         //ROS_INFO("gremo naravnost !!!");
-        twist.linear.x = 0.1;  //optimalna hitrost
+        twist.linear.x = 0.25;  //optimalna hitrost
         twist.angular.z = 0;
         pub.publish(twist);
       }else{
         if(minDesna > minLeva){
           //ROS_INFO("minDesna: %f zavijDesno %i ",minDesna, zavijDesno);
           twist.linear.x = 0;
-          twist.angular.z = -0.35;
+          twist.angular.z = -0.45;
           pub.publish(twist);
         }else{
           //ROS_INFO("minLeva: %f zavijLevo %i ",minLeva, zavijLevo);
           twist.linear.x = 0;
-          twist.angular.z = 0.35;
+          twist.angular.z = 0.45;
           pub.publish(twist);
         }
       }
@@ -195,10 +195,10 @@ void PicobotAuto::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
         if (globKot <= 359 && globKot >= 180){
           ROS_INFO("obracam v desno, globKot %f", globKot);
-          twist.angular.z = -0.35;
+          twist.angular.z = -0.45;
         }else {
           ROS_INFO("obracam v levo, globKot %f", globKot);
-          twist.angular.z = 0.35;
+          twist.angular.z = 0.45;
         }
         twist.linear.x = 0;
         pub.publish(twist);
