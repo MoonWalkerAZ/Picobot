@@ -18,6 +18,8 @@ rostopic pub -r 10 pico/cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.0, y: 0.0,
 
 printenv | grep ROS -> vidimo ros podatke
 
+apt-cache search ros-kinetic
+
 Pomembne poti:
 
 /home/pi/.ros/log/latest
