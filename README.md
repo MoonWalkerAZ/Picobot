@@ -5,3 +5,4 @@ V tem repozitoriju je shranjena vsa programska koda.
 
 Link do diplomske naloge: <a href="https://dk.um.si/IzpisGradiva.php?id=73173&lang=slv">Diploma</a>
  
+<img src="/images/robot.png" width="800">
